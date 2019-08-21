@@ -1,0 +1,200 @@
+/*******************************************************
+ * 
+ * ----------------------
+ * Engine Editor Styles
+ * ----------------------
+ *
+ * These styles do not include any product-specific branding
+ * and/or layout / design. They represent minimal structural
+ * CSS which is necessary for a default rendering of an
+ * MCQSC activity
+ *
+ * The styles are linked/depending on the presence of
+ * certain elements (classes / ids / tags) in the DOM (as would
+ * be injected via a valid MCQSC layout HTML and/or dynamically
+ * created by the MCQSC engine JS)
+ *
+ *
+ *******************************************************/
+
+#cosmatttsc-editor .content-height{
+    overflow: hidden;
+}
+
+#cosmatttsc-editor .no-left-padding{
+    padding-left: 0;
+}
+
+#cosmatttsc-editor .edit-procedure{
+    padding-bottom: 0;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #555;
+}
+
+#cosmatttsc-editor .edit-procedure li{
+    padding: 5px;
+}
+
+#cosmatttsc-editor .ques-text-editor.editor-icon{
+	position: absolute;
+	right: 40px;
+    cursor: pointer;
+}
+
+#cosmatttsc-editor .question-text-container > div.content-height{
+    position: relative;
+}
+
+#cosmatttsc-editor .question-text-viewer{
+	font-weight: 700;
+	font-size: 18px;
+    padding-top: 5px;
+}
+
+#cosmatttsc-editor .question-text-editor{
+	font-weight: 700;
+    padding-top: 5px;
+	font-size: 18px;
+    border: none;
+    border-bottom: 1px solid black;
+}
+
+#cosmatttsc-editor .questions-editor.form{
+	padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#cosmatttsc-editor .form *{
+    margin: 0;
+}
+
+#cosmatttsc-editor .form ul{
+    padding-left: 15px;
+    padding-bottom: 10px;
+    position: relative;
+}
+
+#cosmatttsc-editor .form ul li{
+    padding: 10px;
+    position: static;
+}
+
+#cosmatttsc-editor .form ul li.highlight{
+    background-color: #F2F2F2;
+    border-radius: 6px;
+}
+
+#cosmatttsc-editor .form ul li i{
+    height: 1.8em;
+    width: 1.8em;
+    border-radius: 50%;
+    position: absolute;
+	top: 0;
+    left: 0;
+    display: block;
+    outline: 0;
+    border: 1px solid #BDBDBD;
+    background: #FFF;
+}
+
+#cosmatttsc-editor .form ul li i:after {
+    background-color: #3276B1;
+    content: '';
+    border-radius: 50%;
+    height: 1.1em;
+    width: 1.1em;
+    top: .3em;
+    left: .3em;
+    position: absolute;
+    opacity: 0;
+}
+
+#cosmatttsc-editor .form ul li.highlight i{
+    border-color: #3276B1;
+}
+
+#cosmatttsc-editor .form ul li.highlight i:after{
+    opacity: 1;
+}
+
+#cosmatttsc-editor .form ul li .radio{
+    font-size: 1em;
+    line-height: 1.8em;
+    color: #3D3D3D;
+    cursor: pointer;
+    padding-left: 45px!important;
+}
+
+
+#cosmatttsc-editor .form ul li .radio input {
+    position: absolute;
+    left: -9999px;
+}
+
+#cosmatttsc-editor .form ul li .radio .option-value{
+	position: static!important;
+}
+
+#cosmatttsc-editor .form ul li .radio div.option-value{
+	display: inline-block;
+}
+
+#cosmatttsc-editor .form ul li .radio .correct-answer{
+    font-weight: 700;
+}
+
+#cosmatttsc-editor .form ul li .editor-icon {
+	cursor: pointer;
+}
+
+#cosmatttsc-editor .form ul li .editor-icon.cosmatttsc-edit{
+	position: absolute;
+	right: 40px;
+}
+
+#cosmatttsc-editor .form ul li .delete-icon.cosmatttsc-edit{
+	right: 20px;
+}
+
+#cosmatttsc-editor .form ul li .drag-icon.cosmatttsc-edit{
+	right: 0px;
+}
+
+#cosmatttsc-editor .add-container{
+    padding-bottom: 20px;
+}
+
+#cosmatttsc-editor .add-container .add-item{
+	cursor: pointer;
+}
+
+#cosmatttsc-editor .input-option{
+	width: 90%;
+	border: none;
+	border-bottom: 1px solid black;
+}
+#cosmatttsc-editor .bottom-content{
+    position: relative;
+}
+
+#cosmatttsc-editor .bottom-content h3{
+    margin-top: 5px;
+    padding-left: 15px;
+}
+
+#cosmatttsc-editor .bottom-content .feedback-label{
+    font-size: 17px;
+    padding-left: 15px;
+    overflow: hidden
+}
+
+#cosmatttsc-editor .bottom-content .feedback-text{
+	display: inline-block;
+}
+
+#cosmatttsc-editor .bottom-content .feedback-text-editor{
+    display: inline-block;
+    border: none;
+    border-bottom: 1px solid black;
+}

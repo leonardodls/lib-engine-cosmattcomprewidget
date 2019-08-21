@@ -1,0 +1,95 @@
+
+<!-- Engine Editor Template -->
+
+<div class="cosmatttsc-body" id="cosmatttsc-editor"> 
+   <div class="row">
+      <div class="col-sm-12 well edit-procedure">
+         <div>
+          Use the editor below to author/update Multiple Choice, Single Select question. Typical sequence of authoring and options include the following:
+          </div>
+          <ul>
+            <li>
+              <div>Add <strong>Instructions</strong> [mandatory]</div>
+              <div>
+                This should include the question text to be presented to the student and additional context as necessary.
+              </div>
+            </li>
+            <li>
+              <div>Define <strong>Choices</strong> [mandatory]</div>
+              <div>
+                Choices to be presented to the student a options (possible answers). Use add/edit/remove/reorder options to appropriate setup choices.
+              </div>
+            </li>
+            <li>
+              <div>Mark <strong>Correct Answer</strong> [mandatory]</div>
+              <div>
+                Simply mark the correct answer by selecting the corresponding radio button (for a choice).
+              </div>
+            </li>
+            <li>
+              <div>Specify <strong>Feedback</strong> [optional]</div>
+              <div>
+                Optional instructor feedback may be shown to the user after the answer is submitted (correct or incorrect) or when user request help/hints.
+              </div>
+            </li>
+          </ul>
+      </div>
+   </div>
+  <!-- Loop over all interactions -->
+	<div class="row" rv-each-interact="content.interactions">   
+      <div class="col-sm-12 main-container">    
+         <span class="label label-default">Instructions/Question Text</span>  
+         <div class="col-sm-12 form no-left-padding question-text-container">     
+           <!-- Loop over all questiondata inside interaction -->  
+            <div class="content-height" rv-each-questiondata="content.canvas.data.questiondata | appendindex %interact%">
+            	 <input class="question-text-editor col-xs-10" rv-show="quesEdited.isEditing" rv-value="questiondata.text" rv-on-blur="removeEditing | args quesEdited"></input>
+               <div class="question-text-viewer col-xs-10 no-left-padding" rv-hide="quesEdited.isEditing" rv-text="questiondata.text"></div>
+               <a class="editor-icon fa fa-pencil pull-right ques-text-editor" rv-on-click="toggleQuestionTextEditing | args quesEdited"></a>
+            </div>
+         </div>
+         <div class="col-sm-12 form questions-editor no-left-padding">
+          <span class="label label-default">Options/Correct Choice</span>
+            <ul class="list-unstyled nested-list editor sortable content-height">
+               <!-- Loop over all options inside interaction  (cosmatttsc Array)-->  
+               <li class="col-xs-9 cosmatttsc-item" rv-each-element="interact.cosmatttsc" rv-class-highlight="element.customAttribs.isCorrect" rv-elementIndex="element.customAttribs.index" rv-interactIndex="%interact%">
+                  <label class="radio radio-lg">
+                     <span class="invisible wrong pull-left"></span>
+                     <input type="radio" name="optionsRadios" class="option cosmatttsc-option" rv-key="element.customAttribs.key" rv-value="element.customAttribs.value" rv-checked="element.customAttribs.isCorrect"></input>
+                     <i></i>
+                     <input class="option-value input-option" rv-show="element.customAttribs.isEdited" rv-value="element.customAttribs.value" rv-on-blur="removeEditing | args element"></input>
+                     <div class="option-value" rv-hide="element.customAttribs.isEdited" rv-text="element.customAttribs.value"></div>
+                     <span class="correct-answer pull-right" rv-show="element.customAttribs.isCorrect">Correct Answer</span>
+                  </label>
+                  <a class="editor-icon cosmatttsc-edit fa fa-pencil pull-right" rv-on-click="toggleEditing | args element"></a>
+                  <a class="editor-icon delete-icon cosmatttsc-edit fa fa-trash-o pull-right" rv-on-click="removeItem | args element %interact%"></a>
+                  <a class="editor-icon drag-icon cosmatttsc-edit fa fa-bars pull-right"></a>
+               </li>           
+            </ul>
+        </div>
+        <div class="col xs-12 add-container">
+            <a class="add-item" rv-on-click="addItem | args content %interact%"><u>Add new option</u></a>
+        </div>
+      </div>
+    </div>
+    <div class="bottom-content">
+      <span class="label label-default">Feedback</span>
+      <div class="row no-left-padding">
+         <h3>Feedback options</h3>
+      </div>
+      <div class="col-sm-12 feedback-label">
+        <span class="feedback-text col-xs-4">
+          <b>Answer was correct:</b>
+        </span>
+        <input class="feedback-text-editor col-xs-7" rv-show="feedbackEditing.correct" rv-value="feedback.global.correct" rv-on-blur="removeFeedbackEditing | args 'correct'"></input>
+        <div class="feedback-text-viewer col-xs-7" rv-hide="feedbackEditing.correct" rv-text="feedback.global.correct"></div>
+        <a class="editor-icon fa fa-pencil pull-right ques-text-editor" rv-on-click="toggleFeedbackEditing | args 'correct'"></a>
+      </div>
+      <div class="col-sm-12 feedback-label">
+        <span class="feedback-text col-xs-4">
+          <b>Answer was wrong:</b>
+        </span>
+        <input class="feedback-text-editor col-xs-7" rv-show="feedbackEditing.incorrect" rv-value="feedback.global.incorrect" rv-on-blur="removeFeedbackEditing | args 'incorrect'"></input>
+        <div class="feedback-text-viewer col-xs-7" rv-hide="feedbackEditing.incorrect" rv-text="feedback.global.incorrect"></div>
+        <a class="editor-icon fa fa-pencil pull-right ques-text-editor" rv-on-click="toggleFeedbackEditing | args 'incorrect'"></a>
+      </div>
+</div>

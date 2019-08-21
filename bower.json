@@ -1,0 +1,11 @@
+{
+  "name": "cosmattCompreWidget",
+  "version": "0.4.0",
+  "description": "Compro cosmattCompreWidget Activity engine",  
+  "devDependencies": {
+    "jquery": "2.1.1",
+    "requirejs": "*",
+    "text": "2.0.7",
+    "require-css": "0.1.8"
+  }
+}
