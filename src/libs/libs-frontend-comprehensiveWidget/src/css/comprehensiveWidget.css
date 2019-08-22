@@ -1,0 +1,24 @@
+.acc-comprehensive-container {
+  display: flex;
+  flex-direction: row;
+ /* adding this will affect sticky behaviour overflow: hidden;
+  */
+}
+.acc-comprehensive-container .left-container {
+  flex: 0 1 auto;
+  min-height: 200px;
+  min-width: 150px;
+}
+.acc-comprehensive-container .right-container {
+  flex: 1 0 150px;
+  padding: 10px;
+  min-height: 200px;
+  min-width: 150px;
+  background: #fef1e6;
+}
+.acc-comprehensive-container .splitter {
+  flex: 0 0 auto;
+  width: 2px;
+  background: black;
+  cursor: col-resize;
+}

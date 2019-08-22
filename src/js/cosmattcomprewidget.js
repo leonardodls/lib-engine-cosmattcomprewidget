@@ -33,10 +33,11 @@
 define([
     
     'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
-   'css!../libs/libs-frontend-PLGraph/dist/css/plGraph.min.css',
+   'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
    'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
-   
-    '../libs/libs-frontend-PLGraph/dist/js/plGraph.js'
+   //sdk.leonardodls.com/leonardo-items.js
+   'http://sdk.leonardodls.com/leonardo-items.js',
+    '../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js'
   ], //Required by Rivets
   function(cosmattcomprewidgetTemplateRef) {
 
@@ -162,10 +163,82 @@ define([
         //add callback function to appData
         __content.appData.options.data.assessmentCallback = userResponseHandler;
         __content.appData.options.data.autoResizer = autoResizeEngine;
-        __pluginInstance = $pluginArea.ProfitLossCurve(__content.appData.options.data);
+        __pluginInstance = $pluginArea.comprehensiveWidget(__content.appData.options.data);
 
         $questionContainer.append($questionArea);
         $questionContainer.append($pluginArea);
+         
+        var fullscreen = $('<div class="fullscreen max-min-toolbar" style="float:right;cursor:pointer;color:#01579b;paddin-top:20px;padding-left20px;padding-right:4px;">Full Screen | </div>');
+        $questionContainer.append(fullscreen);
+
+        var minScreen = $('<div class="minScreen max-min-toolbar" style="float:right;cursor:pointer;display:none;color:#01579b;paddin-top:20px;padding-left20px;padding-right:4px;">Min Screen</div>');
+        $questionContainer.append(minScreen);
+
+
+        var checkMyWork = $('<div class="checkMyWork" style="float:right;cursor:pointer;color:#01579b;paddin-top:20px;padding-right:4px;">Check My Work | </div>');
+        $questionContainer.append(checkMyWork);
+
+        var resetButton = $('<div class="resetButton" style="float:right;cursor:pointer;color:#01579b;paddin-top:20px;padding-left20px;padding-right:4px;">Reset | </div>');
+        $questionContainer.append(resetButton);
+
+        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_Chapter_5_Introduction___ClosingEntries___test-Emded_01');
+        //iframeArea.find('html').css('overflow','hidden');
+        $questionContainer.find(".fullscreen").bind("click", (function () {
+            
+           
+
+         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_Chapter_5_Introduction___ClosingEntries___test-Emded_01');
+            //$('body', window.parent.document).append($('body', window.parent.document).find(".iframeContainer"));
+            // $('body', window.parent.document).append($pluginArea);
+
+              iframeArea.css({
+                'width':'100vw',
+                'height': '100vh',
+                'z-index': '9999',
+                'background-color': '#fff',
+                'position': 'fixed',
+                'top': 0,
+                'left': 0
+              });
+             
+              $pluginArea.find( ".fullscreen").hide();
+              $pluginArea.find( ".minScreen").show();
+              
+        }));
+        $pluginArea.find(".minScreen").bind("click", (function () {
+
+                  // $container.append(widgetContainer);
+
+                  iframeArea.css({
+                    'width':'100vw',
+                    'height': '100vh',
+                    'z-index': '0',                   
+                    'position': 'relative',
+                   
+                  });
+                   
+            $pluginArea.find( ".minScreen").hide();
+            $pluginArea.find( ".fullscreen").show();
+                 
+        }));
+
+       $questionContainer.find(".checkMyWork").bind("click", (function () {
+          
+          
+            window.top.assessment_compre.component.checkMyWorkBtnClicked();
+           
+       }));
+
+       $questionContainer.find(".resetButton").bind("click", (function () {
+          
+          
+            window.top.assessment_compre.component.reset();
+           
+       }));    
+
+        
+        
+
 
         $(elRoot).html($questionContainer);
 
