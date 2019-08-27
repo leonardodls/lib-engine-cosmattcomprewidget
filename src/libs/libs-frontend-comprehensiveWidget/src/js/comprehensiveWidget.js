@@ -10,6 +10,7 @@
 
     $(this).empty();
     let type, $container1, $container2, viewJSON, data;
+    let leoLeftItem, leoRightItem;
     let hideScrollContainers = [];
     let $container = $(this);
 
@@ -52,8 +53,8 @@
         //add div to the main container
         $container.append($div);
 
-        setDataAndCreateGrids(data.leftSideData, $container1[0]);
-        setDataAndCreateGrids(data.rightSideData, $container2[0]);
+        leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);
+        leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
       }
       updateContainerItemProperties();
     };
@@ -69,10 +70,10 @@
 
     };
 
-    let setDataAndCreateGrids = function (gridData, container) {
+    let setDataAndCreateGrids = function (gridData, container, forceScroll) {
 
       let height;
-      if (gridData.height == "scroll") {
+      if (gridData.height == "scroll" || forceScroll) {
         height = "100%";
       } else {
         height = "expand";
@@ -84,21 +85,21 @@
       };
 
 
-      createGrid(gridData.publishedId, container, undefined, uiStyle, false);
-
-      $(container).find(".leonardoPlayerContainer").css("overflow", "hidden");
-
 
       if (gridData.height == "scroll") {
-        hideScrollContainers.push(container);
-        waitForEl(container, ".leonardoPlayerContainer", function (args) {
+        // hideScrollContainers.push(container);  //spreadsheet bug , cannot be used instead below waitForEl used as alternative
 
+        //wait for grid to load and then set is overflow to hidden
+        waitForEl(container, ".leonardoPlayerContainer", function (args) {
           args.css("overflow", "hidden");
         });
+
+        //default sticky for small resolution
         $(container).css("position", "sticky");
 
         // 50 px top header , 34 px footer  , 17 px for scrollbar
-        $(container).css("height", "calc(100vh - 101px)");
+        // $(container).css("height", "calc(100vh - 101px)");
+        $(container).css("height", "690px");
         // top to be 50px header + 6px buffer
         $(container).css("top", "56px");
         // for auto start end align 
@@ -106,6 +107,7 @@
       }
 
 
+      return createGrid(gridData.publishedId, container, undefined, uiStyle, false);
     };
 
     var waitForEl = function (container, selector, callback) {
@@ -118,15 +120,19 @@
       }
     };
 
-    // let onRender = function () {
-    //   debugger;
-
-    //   hideScrollContainers.forEach(function (container, index) {
-
-
-    //   });
-
-    // };
+    let itemReady = function () {
+      console.log("calling from ready");
+      console.log(leoLeftItem);
+      console.log(leoRightItem);
+    };
+    let widgetDimensionChangeHandler = function (args) {
+      if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
+        $container.trigger("widgetResized", [args]);
+      } else {
+        let dim = leoRightItem.getRequiredDimension();
+        $container.trigger("widgetResized", { height: dim.height });
+      }
+    };
 
 
     let createGrid = function (publishedId, container, config, uiStyle, showPlayerButtons, callbacks) {
@@ -161,7 +167,8 @@
       // to be set based on requirements
       if (callbacks == undefined) {
         callbacks = {
-          // render: onRender,
+          ready: itemReady,
+          widgetDimensionChange: widgetDimensionChangeHandler,
           change: function (range, data) { console.log("Range is " + range + "and value is " + data) },
           reset: function resetItemHandler(args) { console.log("reset args", args) },
           hintReveal: function () {
@@ -172,42 +179,71 @@
 
 
       if (window.LeonardoItems && window.LeonardoItems !== undefined) {
-        var finalUiStyle = Object.assign({}, uiStyle);
-        // if ( params.options.data.meta && params.options.data.meta.renderOverrides ) {
-        //   Object.assign(finalUiStyle, params.options.data.meta.renderOverrides);
-        // }
-        LeonardoItems.init({
+
+        return LeonardoItems.init({
           request: {
             item: publishedId
           }
         }, container, {
             events: callbacks,
-            uiStyle: finalUiStyle,
             uiStyle: uiStyle,
             playerButtons: { visible: showPlayerButtons }
-            // enableframeButton: params.options.data.meta.enableframeButton !== undefined ? params.options.data.meta.enableframeButton : false,
-
           });
+
+
       }
-
-
 
     };
     var updateInputs = function (params) {
-            
+
+    }
+
+    var markAnswers = function (params) {
+    };
+
+
+
+    let addListeners = function () {
+
+      $container.on("fullScreenEvent", function (event, args) {
+        // reload right grid with forceScroll as true
+        $container2 = $container.find('#container2');
+        $container2.empty();
+        setDataAndCreateGrids(data.rightSideData, $container2[0], true);
+        resizeGridContainers(true);
+      });
+    };
+    let resizeGridContainers = function (isFullScreen) {
+      if (isFullScreen) {
+        //resize the containers based on the height of bottom bar and top nav bar
+        let bottomBarHt = $('.bottomBar-cosmatengine').outerHeight(true);
+        let topBarHt = $('.topBar-cosmatengine').outerHeight(true);
+        let sum = bottomBarHt + topBarHt + 10;   //10px buffer
+
+        //set height of container1 and container2
+        $('#container1', $container).css("height", "calc(100vh - " + sum + "px)");
+        $('#container2', $container).css("height", "calc(100vh - " + sum + "px)");
+
+        // todo check resize 
+        $('#placeholder').css('margin', '0');
+        $('#placeholder').removeClass('ribbon-adjustments');
+
       }
 
-      var markAnswers = function (params) {
-           
-
-            
     };
+
+    addListeners();
     createContainer();
-      
+
+
     return {
       this: this,
       updateInputs: updateInputs,
-      markAnswers: markAnswers
+      markAnswers: markAnswers,
+      leoLeftItem: leoLeftItem,
+      leoRightItem: leoRightItem
+
+
     };
   }
 })(jQuery);

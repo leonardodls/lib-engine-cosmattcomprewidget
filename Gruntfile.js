@@ -10,6 +10,12 @@ module.exports = function(grunt) {
   // Grunt configuration.
   grunt.initConfig({
     // Clean dist and bower folders
+    backup: {
+      dist: {
+        src: 'dist/',
+        dest: 'dist-bak/backup.tgz'
+      },
+    },
     clean: {
       dist: {
         options: {
@@ -107,24 +113,33 @@ module.exports = function(grunt) {
           dest: dist + '/assets'
         }]
       }
+    },
+    exec: {
+      serve: {
+        command: 'serve'
+      }
     }
   });
 
   //Load grunt Tasks
+  grunt.loadNpmTasks('grunt-backup');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-bower-task');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-text-replace');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-exec');
 
   // Build distribution folder
   grunt.registerTask('build', [
+    'backup:dist',
     'clean:dist',
     'clean:bower',
     'bower:install',
     'requirejs',
-    'copy'
+    'copy',
+    'exec:serve'
   ]);
 
   // Run a local server at port 9001 (http://localhost:9001/) to serve engine files.

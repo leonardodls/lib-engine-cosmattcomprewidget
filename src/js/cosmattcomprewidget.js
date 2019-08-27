@@ -31,18 +31,18 @@
 // 8:23 22/06/2017
 
 define([
-    
-    'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
-   'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
-   'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
-   //sdk.leonardodls.com/leonardo-items.js
-   'http://sdk.leonardodls.com/leonardo-items.js',
-    '../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js'
-  ], //Required by Rivets
-  function(cosmattcomprewidgetTemplateRef) {
+
+  'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
+  'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
+  'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
+  //sdk.leonardodls.com/leonardo-items.js
+  'http://sdk.leonardodls.com/leonardo-items.js',
+  '../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js'
+], //Required by Rivets
+  function (cosmattcomprewidgetTemplateRef) {
 
 
-    cosmattcomprewidget = function() {
+    cosmattcomprewidget = function () {
 
       "use strict";
 
@@ -60,7 +60,7 @@ define([
         RESIZE_MODE: "auto",
         /* Possible values - "manual"/"auto". Default value is "auto". */
         RESIZE_HEIGHT: "580" /* Applicable, if RESIZE_MODE is manual. If RESIZE_HEIGHT is defined in TOC then that will overrides. */
-          /* If both config RESIZE_HEIGHT and TOC RESIZE_HEIGHT are not defined then RESIZE_MODE is set to "auto"*/
+        /* If both config RESIZE_HEIGHT and TOC RESIZE_HEIGHT are not defined then RESIZE_MODE is set to "auto"*/
       };
 
       /*
@@ -127,6 +127,7 @@ define([
       };
 
       var __pluginInstance;
+      var __isFullScreen = false;
 
       /********************************************************/
       /*                  ENGINE-SHELL INIT FUNCTION
@@ -154,9 +155,17 @@ define([
 
 
         /* ------ VALIDATION BLOCK END -------- */
-        var $questionContainer = $('<div class="row cosmattcomprewidget-engine"></div>');
-        var $questionArea = $('<p class="col-sm-12 text-primary question-text"></p>');
-        var $pluginArea = $('<div class="col-sm-12"></div>');
+        var $questionContainer = $('<div class="cosmattcomprewidget-engine"></div>');
+        var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="container1"   style="width: 100%;"  ></div></nav>');
+
+
+        var $questionArea = $('<span class="text-primary question-text"></span>');
+        $topBar.find('.container1').append($questionArea);
+
+        var $backBtn = $('<button class="backbtn btn-primary btn  pull-right" style="margin-right: 10px;;display: none;">Back</button>');
+        $topBar.find('.container1').append($backBtn);
+
+        var $pluginArea = $('<div class="pluginArea"></div>');
 
         $questionArea.html(__content.questionText);
 
@@ -165,100 +174,182 @@ define([
         __content.appData.options.data.autoResizer = autoResizeEngine;
         __pluginInstance = $pluginArea.comprehensiveWidget(__content.appData.options.data);
 
-        $questionContainer.append($questionArea);
+        $questionContainer.append($topBar);
         $questionContainer.append($pluginArea);
-         
-        var fullscreen = $('<div class="fullscreen max-min-toolbar" style="float:right;cursor:pointer;color:#01579b;paddin-top:20px;padding-left20px;padding-right:4px;">Full Screen | </div>');
-        $questionContainer.append(fullscreen);
 
-        var minScreen = $('<div class="minScreen max-min-toolbar" style="float:right;cursor:pointer;display:none;color:#01579b;paddin-top:20px;padding-left20px;padding-right:4px;">Min Screen</div>');
-        $questionContainer.append(minScreen);
+        let $bottomBar = $('<div class="bottomBar-cosmatengine"></div>');
+        var fullscreen = $('<div class="btn btn-primary fullscreen max-min-toolbar" >Full Screen</div>');
+        $bottomBar.append(fullscreen);
+
+        var minScreen = $('<div class="btn  btn-primary minScreen max-min-toolbar" style="display: none;">Min Screen</div>');
+        $bottomBar.append(minScreen);
 
 
-        var checkMyWork = $('<div class="checkMyWork" style="float:right;cursor:pointer;color:#01579b;paddin-top:20px;padding-right:4px;">Check My Work | </div>');
-        $questionContainer.append(checkMyWork);
+        var checkMyWork = $('<div class="btn btn-primary  checkMyWork">Check My Work</div>');
+        $bottomBar.append(checkMyWork);
 
-        var resetButton = $('<div class="resetButton" style="float:right;cursor:pointer;color:#01579b;paddin-top:20px;padding-left20px;padding-right:4px;">Reset | </div>');
-        $questionContainer.append(resetButton);
+        var resetButton = $('<div class="btn btn-primary resetButton" style="margin-left: 10px;">Reset</div>');
+        $bottomBar.append(resetButton);
+        var submitButton = $('<div class="btn btn-primary resetButton" style="margin-left: 10px;">Submit</div>');
+        $bottomBar.append(submitButton);
+        $questionContainer.append($bottomBar);
 
-        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_Chapter_5_Introduction___ClosingEntries___test-Emded_01');
+        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
+
+
         //iframeArea.find('html').css('overflow','hidden');
         $questionContainer.find(".fullscreen").bind("click", (function () {
-            
-           
+          //show back button
+          $backBtn.toggle();
 
-         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_Chapter_5_Introduction___ClosingEntries___test-Emded_01');
-            //$('body', window.parent.document).append($('body', window.parent.document).find(".iframeContainer"));
-            // $('body', window.parent.document).append($pluginArea);
+          $pluginArea.trigger("fullScreenEvent", ["bim", "baz"]);
 
-              iframeArea.css({
-                'width':'100vw',
-                'height': '100vh',
-                'z-index': '9999',
-                'background-color': '#fff',
-                'position': 'fixed',
-                'top': 0,
-                'left': 0
-              });
-             
-              $pluginArea.find( ".fullscreen").hide();
-              $pluginArea.find( ".minScreen").show();
-              
-        }));
-        $pluginArea.find(".minScreen").bind("click", (function () {
 
-                  // $container.append(widgetContainer);
+          //hide the footer and top navbar dom elements
+          $('*', parent.document).filter(function () {
+            if ($(this).css("position") === 'fixed') {
+              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')) {
+                return this;
+              }
+            }
+          }).toggle();
 
-                  iframeArea.css({
-                    'width':'100vw',
-                    'height': '100vh',
-                    'z-index': '0',                   
-                    'position': 'relative',
-                   
-                  });
-                   
-            $pluginArea.find( ".minScreen").hide();
-            $pluginArea.find( ".fullscreen").show();
-                 
+          iframeArea.css({
+            'width': '100vw',
+            'height': '100vh',
+            'z-index': '9999',
+            'background-color': '#fff',
+            'position': 'fixed',
+            'top': 0,
+            'left': 0
+          });
+
+          $(this).hide();
+          $questionContainer.find(".minScreen").show();
+          
+          __isFullScreen = true;
         }));
 
-       $questionContainer.find(".checkMyWork").bind("click", (function () {
-          
-          
-            window.top.assessment_compre.component.checkMyWorkBtnClicked();
-           
-       }));
+        $backBtn.bind("click", (function () {
+          //hide self
 
-       $questionContainer.find(".resetButton").bind("click", (function () {
-          
-          
-            window.top.assessment_compre.component.reset();
-           
-       }));    
+          $(minScreen).trigger("click");
 
-        
-        
+        }));
+
+
+        $questionContainer.find(".minScreen").bind("click", (function () {
+
+          __isFullScreen = false;
+          $backBtn.toggle();
+          // unhide the footer and top navbar dom elements
+          $('*', parent.document).filter(function () {
+            if ($(this).css("position") === 'fixed') {
+              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')) {
+                return this;
+              }
+            }
+          }).toggle();
+          // $container.append(widgetContainer);
+
+          iframeArea.css({
+            'width': '100%',
+            'height': '100%',
+            'z-index': '',
+            'background-color': '',
+            'position': '',
+            'top': '',
+            'left': ''
+
+          });
+
+          //todo bottom bar properties to be changed
+
+          $(this).hide();
+          $questionContainer.find(".fullscreen").show();
+
+          // reset  the body scroll bar on goint to min screen
+          $('body', window.parent.document).css("overflow", "");
+
+
+        }));
+
+        $questionContainer.find(".checkMyWork").bind("click", (function () {
+
+
+          window.top.assessment_compre.component.checkMyWorkBtnClicked();
+          $(this).text(window.top.assessment_compre.component.checkMyWorkText);
+
+
+
+        }));
+
+        $questionContainer.find(".resetButton").bind("click", (function () {
+          window.top.assessment_compre.component.reset();
+
+        }));
+
+
+        // debugger;
+        window.parent.onscroll = function () {
+          // var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_Chapter_5_Introduction___ClosingEntries___test-Emded_01');
+          // var iFrame= $('body', window.parent.document).find(".iframeContainer").find('iframe');
+          // iFrame.attr('name', 'ifrCompProb');
+          // $('#container1').animate({
+          //   top : window.parent.pageYOffset + 5 +"px"
+          // },'fast');
+          $('#container1').css('top', window.parent.pageYOffset - 160 + "px");
+
+          // $('html')[0].scrollTop = window.parent.pageYOffset;
+          // document.documentElement.scrollTop = window.parent.pageYOffset;
+          // frames.ifrCompProb.document.documentElement.scrollTop = window.pageYOffset;
+          // $('body')[0].scrollTop = window.parent.pageYOffset;
+          // document.body.scrollTop = window.parent.pageYOffset;
+          // frames.ifrCompProb.document.body.scrollTop = window.pageYOffset; // Google Chrome, Safari, documents without valid doctype
+
+        };
+
+        // window.parent.onresize=function() {
+        //   var iframeContainer = $('body', window.parent.document).find(".iframeContainer");
+        //   window.parent.document.body.style.height = document.body.offsetHeight + parseInt(iframeContainer[0].style.top) + parseInt(iframeContainer[0].style.bottom) + 'px';
+        //   // document.body.style.height = frames.ifr.document.body.offsetHeight + parseInt(document.getElementById('iframe_container').style.top) + parseInt(document.getElementById('iframe_container').style.bottom) + 'px'
+        // };
+        // var $iFrame= $('body', window.parent.document).find(".iframeContainer").find('iframe');
+        // // $iFrame.attr("scrolling", "no");
+        // $iFrame[0].onload=function() {
+        //   var iframeContainer = $('body', window.parent.document).find(".iframeContainer");
+        //   window.parent.document.body.style.height = document.body.offsetHeight + parseInt(iframeContainer[0].style.top) + parseInt(iframeContainer[0].style.bottom) + 'px';
+        //   // onload = "document.body.style.height = frames.ifr.document.body.offsetHeight + parseInt(document.getElementById('iframe_container').style.top) + parseInt(document.getElementById('iframe_container').style.bottom) + 'px'"
+        // }
+
+
 
 
         $(elRoot).html($questionContainer);
 
-        /* ---------------------- SETUP EVENTHANDLER STARTS----------------------------*/
-
-        // $('input[id^=option]').change(__handleRadioButtonClick);
-
-        // $(document).bind('userAnswered', function(e, value) {
-        //   __saveResults(false);
-        // });
-
-        /* ---------------------- SETUP EVENTHANDLER ENDS------------------------------*/
 
         /* Inform the shell that init is complete */
         if (callback) {
           callback();
         }
 
-        /* ---------------------- END OF INIT ---------------------------------*/
-      } /* init() Ends. */
+
+        //pluginArea Resize event binding
+        $pluginArea.on("widgetResized", function (event, args) {
+
+
+          if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
+            activityAdaptor.autoResizeActivityIframe();
+          }
+        });
+
+
+
+
+
+      }
+      /* ---------------------- END OF INIT ---------------------------------*/
+
       /* ---------------------- PUBLIC FUNCTIONS --------------------------------*/
       /**
        * ENGINE-SHELL Interface
@@ -273,7 +364,7 @@ define([
       }
       function userResponseHandler(callbackValue) {
         for (var property in callbackValue) {
-          if (callbackValue.hasOwnProperty(property) && callbackValue[property].value  !== undefined) {
+          if (callbackValue.hasOwnProperty(property) && callbackValue[property].value !== undefined) {
             var interactionMinScore = __content.score.min;
             var optionsCount = Object.keys(__content.optionsJSON).length;
             var interactionMaxScore = __content.score.max / optionsCount;
@@ -339,19 +430,74 @@ define([
        * Function to show user grades.
        */
       function showGrades(savedAnswer, reviewAttempt) {
-        /* Show last saved answers. */
-        // updateLastSavedResults(savedAnswer);
-        /* Mark answers. */
-        __markAnswers();
-        //$('input[id^=option]').attr("disabled", true);
+        debugger;
+        console.log("__pluginInstance.leoRightItem", __pluginInstance.leoRightItem);
+        if (__pluginInstance.leoRightItem !== undefined) {
+          var s = __pluginInstance.leoRightItem.score();
+          __pluginInstance.leoRightItem.displayFeedback(s);
+
+          __updateAnsStatus(s);
+          /* Saving Answer. */
+          __saveResults(false);
+
+        }
+
       }
 
+      function __updateAnsStatus(s) {
+        var status = __checkAnswer(s);
+
+        var interactionMaxScore = __content.score.max;
+        var interactionMinScore = __content.score.min;
+        var interactionId = "i1";
+        var interaction = __content.userAnswersJSON[interactionId];
+
+        if (interaction) {
+          if (status == __constants.ACTIVITY_INCORRECT) {
+            interaction.score = interactionMinScore;
+            interaction.status = 'incorrect';
+          } else if (status == __constants.ACTIVITY_CORRECT) {
+            interaction.score = interactionMaxScore;
+            interaction.status = 'correct';
+          }
+        }
+      }
+      function __checkAnswer(scoreObj) {
+        var status = __constants.ACTIVITY_INCORRECT;
+        var incorrectFound = false; // at least one incorrect found
+        var correctFound = false; // // at least one correct found
+        var sheets = scoreObj.sheets;
+        for (var sheetIndex in sheets) {
+          var rows = sheets[sheetIndex].rows;
+          for (var rowIndex in rows) {
+            var cells = rows[rowIndex].cells;
+            for (var cellIndex in cells) {
+              var grade = cells[cellIndex].grade;
+              if (grade == "INCORRECT") {
+                incorrectFound = true;
+              } else if (grade == "CORRECT") {
+                correctFound = true;
+              }
+            }
+          }
+        }
+
+        if (correctFound) {
+          status = __constants.ACTIVITY_CORRECT;
+        }
+
+        if (incorrectFound) { // mark incorrect even if single cell was filled incorrectly
+          status = __constants.ACTIVITY_INCORRECT;
+        }
+
+        return status;
+      }
       /**
        * Function to display last result saved in LMS.
        */
       function updateLastSavedResults(lastResults) {
         var updatePluginVals = {};
-        $.each(lastResults.interactions, function(num, value) {
+        $.each(lastResults.interactions, function (num, value) {
           var interactionMinScore = __content.score.min;
           var optionsCount = Object.keys(__content.optionsJSON).length;
           var interactionMaxScore = __content.score.max / optionsCount;
@@ -399,13 +545,7 @@ define([
         __content.instructionText = jsonContent.content.instructions[0][tagName];
         __content.appData = jsonContent["app-data"];
         __content.score = jsonContent.meta.score;
-        /* Put directions in JSON. */
-        //jsonContent.content.directions = __content.directionsJSON;
-        // $.each(jsonContent.content.stimulus, function (i) {
-        //     if (this.tag === "image") {
-        //         jsonContent.content.stimulus.mediaContent = params.questionMediaBasePath + this.image;
-        //     }
-        // });
+
         var questionText = jsonContent.content.canvas.data.questiondata[0].text;
 
         var interactionId = [];
@@ -415,7 +555,7 @@ define([
         /* Parse questiontext as HTML to get HTML tags. */
         var parsedQuestionArray = $.parseHTML(jsonContent.content.canvas.data.questiondata[0].text);
         var j = 0;
-        $.each(parsedQuestionArray, function(i, el) {
+        $.each(parsedQuestionArray, function (i, el) {
           if (this.href === interactionReferenceString) {
             interactionId[j] = this.childNodes[0].nodeValue.trim();
             __interactionIds.push(interactionId[j]);
@@ -424,7 +564,7 @@ define([
           }
         });
 
-        $.each(interactionId, function(i) {
+        $.each(interactionId, function (i) {
           var interactionId = this;
           //var id = __config.ENTRY_BOX_PREFIX +  __content.answersXML.length;
           /*
@@ -434,25 +574,7 @@ define([
           __content.answersJSON[interactionId] = jsonContent.responses[interactionId];
           __content.optionsJSON[interactionId] = jsonContent.content.interactions[interactionId];
         });
-        /* Replace interaction tag with blank string. */
-        // jsonContent.content.canvas.data.questiondata[0].text = jsonContent.content.canvas.data.questiondata[0].text.replace(interactionTag, "");
-        // var questionText = "1.  " + jsonContent.content.canvas.data.questiondata[0].text;
-        // var correctAnswerNumber = jsonContent.responses[interactionId].correct;
-        // var interactionType = jsonContent.content.interactions[interactionId].type;
-        // var optionCount = jsonContent.content.interactions[interactionId][interactionType].length;
 
-        // /* Make optionsJSON and answerJSON from JSON. */
-        // for (var i = 0; i < optionCount; i++) {
-        //     var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
-        //     var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
-        //     __content.optionsJSON.push(__getHTMLEscapeValue(option));
-        //     optionObject[Object.keys(optionObject)] = option;
-        //     /* Update JSON after updating option. */
-        //     jsonContent.content.interactions[interactionId][interactionType][i] = optionObject;
-        //     if (Object.keys(optionObject) == correctAnswerNumber) {
-        //         __content.answersJSON[0] = optionObject[Object.keys(optionObject)];
-        //     }
-        // }
         __content.questionText = questionText;
 
         /* Returning processed JSON. */
@@ -461,194 +583,10 @@ define([
 
 
       /**
-       * Parse and Update Question Set type JSON based on  cosmatttsc specific requirements.
-       */
-      // function __parseAndUpdateQuestionSetTypeJSON(jsonContent) {
-
-      //     /* Extract interaction id's and tags from question text. */
-      //     var interactionId = "";
-      //     var interactionTag = "";
-      //     /* String present in href of interaction tag. */
-      //     var interactionReferenceString = "http://www.comprodls.com/m1.0/interaction/cosmatttsc";
-      //     /* Parse questiontext as HTML to get HTML tags. */
-      //     var parsedQuestionArray = $.parseHTML(jsonContent.content.canvas.data.questiondata[0].text);
-      //     $.each(parsedQuestionArray, function (i, el) {
-      //         if (this.href === interactionReferenceString) {
-      //             interactionId = this.childNodes[0].nodeValue.trim();
-      //             __interactionIds.push(interactionId);
-      //             interactionTag = this.outerHTML;
-      //             interactionTag = interactionTag.replace(/"/g, "'");
-      //         }
-      //     });
-      //     /* Replace interaction tag with blank string. */
-      //     jsonContent.content.canvas.data.questiondata[0].text = jsonContent.content.canvas.data.questiondata[0].text.replace(interactionTag, "");
-      //     var questionText = "1.  " + jsonContent.content.canvas.data.questiondata[0].text;
-      //     var correctAnswerNumber = jsonContent.responses[interactionId].correct;
-      //     var interactionType = jsonContent.content.interactions[interactionId].type;
-      //     var optionCount = jsonContent.content.interactions[interactionId][interactionType].length;
-
-      //     /* Make optionsJSON and answerJSON from JSON. */
-      //     for (var i = 0; i < optionCount; i++) {
-      //         var optionObject = jsonContent.content.interactions[interactionId][interactionType][i];
-      //         var option = optionObject[Object.keys(optionObject)].replace(/^\s+|\s+$/g, '');
-      //         __content.optionsJSON.push(__getHTMLEscapeValue(option));
-      //         optionObject[Object.keys(optionObject)] = option;
-      //         /* Update JSON after updating option. */
-      //         jsonContent.content.interactions[interactionId][interactionType][i] = optionObject;
-      //         if (Object.keys(optionObject) == correctAnswerNumber) {
-      //             __content.answersJSON[0] = optionObject[Object.keys(optionObject)];
-      //         }
-      //     }
-      //     __content.questionsJSON[0] = questionText + " ^^ " + __content.optionsJSON.toString() + " ^^ " + interactionId;
-      // }
-
-      /**
-       * Escaping HTML codes from String.
-       */
-      // function __getHTMLEscapeValue(content) {
-      //     var tempDiv = $("<div></div>");
-      //     $(tempDiv).html(content);
-      //     $("body").append(tempDiv);
-      //     content = $(tempDiv).html();
-      //     $(tempDiv).remove();
-      //     return content;
-      // }
-
-      /***
-             * Function to modify question JSON for easy iteration in template
-             * 
-             * Original JSON Object
-             * ---------------------
-             * 
-             * "cosmatttsc": [
-                  {
-                    "choiceA": "She has the flu." 
-                  },
-                  {
-                    "choiceB": "She has the measles."
-                  }  
-                ]
-        
-                Modified JSON Object
-                ----------------------
-        
-                "cosmatttsc": [
-                  {
-                      "customAttribs" : {
-                            "key" : "choiceA",
-                            "value" : "She has the flu.",
-                            "isEdited" : false,
-                            "index" : 0
-                            "isCorrect" : false
-                      } 
-                  },
-                   {
-                      "customAttribs" : {
-                            "key" : "choiceB",
-                            "value" : "She has the measles.",
-                            "isEdited" : false,
-                            "index" : 1
-                            "isCorrect" : true
-                      } 
-                  }  
-                ]
-             */
-      // function __parseAndUpdateJSONForRivets(jsonContent) {
-      //     var processedArray = [];
-      //     for (var i = 0; i < __interactionIds.length; i++) {
-      //         jsonContent.content.interactions[__interactionIds[i]].cosmatttsc.forEach(function (obj, index) {
-      //             var processedObj = {};
-      //             processedObj.customAttribs = {};
-      //             Object.keys(obj).forEach(function (key) {
-      //                 processedObj.customAttribs.key = key;
-      //                 processedObj.customAttribs.value = obj[key];
-      //             });
-      //             processedArray.push(processedObj);
-      //         });
-      //         jsonContent.content.interactions[__interactionIds[i]].cosmatttsc = processedArray;
-      //     }
-      // }
-
-      /*------------------------RIVET INITIALIZATION & BINDINGS -------------------------------*/
-      // function __initRivets() {
-      //     /* Formatter to transform object into object having 'key' property with value key
-      //      * and 'value' with the value of the object
-      //      * Example:
-      //      * var obj = {'choiceA' : 'She has flu.'} to
-      //      * obj= { 'key' : 'choiceA', 'value' : 'She has flu.'}
-      //      * This is done to access the key and value of object in the template using rivets.
-      //      */
-      //     rivets.formatters.propertyList = function (obj) {
-      //         return (function () {
-      //             var properties = [];
-      //             for (var key in obj) {
-      //                 properties.push({ key: key, value: obj[key] })
-      //             }
-      //             return properties
-      //         })();
-      //     }
-
-      //     /* This formatter is used to append interaction property to the object
-      //      * and return text of the question for particular interaction
-      //      */
-      //     rivets.formatters.appendInteraction = function (obj, interaction, cosmatttsc) {
-      //         return obj[interaction].text;
-      //     }
-
-      //     /* This formatter is used to return the array of options for a particular
-      //      * interaction so that rivets can iterate over it.
-      //      */
-      //     rivets.formatters.getArray = function (obj, interaction) {
-      //         return obj[interaction].cosmatttsc;
-      //     }
-
-      //     var isMCQImageEngine = false;
-      //     /* Find if layout is of type MCQ_IMG*/
-      //     if (__content.layoutType == 'MCQ_IMG') {
-      //         isMCQImageEngine = true;
-      //     }
-
-      //     /*Bind the data to template using rivets*/
-      //     rivets.bind($('#cosmatttsc-engine'), {
-      //         content: __processedJsonContent.content,
-      //         isMCQImageEngine: isMCQImageEngine,
-      //         feedback: __processedJsonContent.feedback,
-      //         showFeedback: __feedback
-      //     });
-      // }
-
-      /*------------------------RIVETS END-------------------------------*/
-
-      /* ---------------------- JQUERY BINDINGS ---------------------------------*/
-      /**
-       * Function to handle radio button click.
-       */
-      // function __handleRadioButtonClick(event) {
-      //     /*
-      //      * Soft save here
-      //      */
-      //     var currentTarget = event.currentTarget;
-
-      //     $("label.radio").parent().removeClass("highlight");
-      //     $(currentTarget).parent().parent("li").addClass("highlight");
-
-      //     var newAnswer = currentTarget.value.replace(/^\s+|\s+$/g, '');
-
-      //     /* Save new Answer in memory. */
-      //     __content.userAnswersJSON[0] = newAnswer.replace(/^\s+|\s+$/g, '');
-
-      //     __state.radioButtonClicked = true;
-
-      //     var interactionId = __content.questionsJSON[0].split("^^")[2].trim();
-
-      //     $(document).triggerHandler('userAnswered');
-      // }
-
-      /**
-       * Function called to send result JSON to adaptor (partial save OR submit).
-       * Parameters:
-       * 1. bSumbit (Boolean): true: for Submit, false: for Partial Save.
-       */
+   * Function called to send result JSON to adaptor (partial save OR submit).
+   * Parameters:
+   * 1. bSumbit (Boolean): true: for Submit, false: for Partial Save.
+   */
       function __saveResults(bSubmit) {
 
         var uniqueId = activityAdaptor.getId();
@@ -659,7 +597,7 @@ define([
         if (bSubmit === true) { /*Hard Submit*/
 
           /*Send Results to platform*/
-          activityAdaptor.submitResults(answerJSON, uniqueId, function(data, status) {
+          activityAdaptor.submitResults(answerJSON, uniqueId, function (data, status) {
             if (status === __constants.STATUS_NOERROR) {
               __state.activitySubmitted = true;
               /*Close platform's session*/
@@ -677,7 +615,7 @@ define([
           });
         } else { /*Soft Submit*/
           /*Send Results to platform*/
-          activityAdaptor.savePartialResults(answerJSON, uniqueId, function(data, status) {
+          activityAdaptor.savePartialResults(answerJSON, uniqueId, function (data, status) {
             if (status === __constants.STATUS_NOERROR) {
               __state.activityPariallySubmitted = true;
             } else {
@@ -699,7 +637,7 @@ define([
         var interactions = Object.keys(__content.optionsJSON);
         var answers = __content.answersJSON;
 
-        interactions.forEach(function(element, index) {
+        interactions.forEach(function (element, index) {
           if (userAnswers[element] && userAnswers[element].status) {
             if (userAnswers[element].status == "correct") {
               markAnswerObj[options[element].type] = { status: true };
@@ -715,28 +653,8 @@ define([
         __pluginInstance.markAnswers(markAnswerObj);
 
 
-
-        // var radioNo = "";
-        // /* Looping through answers to show correct answer. */
-        // for (var i = 0; i < __content.optionsJSON.length; i++) {
-        //     radioNo = "" + i;
-        //     __markRadio(radioNo, __content.answersJSON[0], __content.optionsJSON[i]);
-        // }
-        // __generateFeedback();
       }
-      /* Add correct or wrong answer classes*/
-      // function __markRadio(optionNo, correctAnswer, userAnswer) {
-      //     if (userAnswer.trim() === correctAnswer.trim()) {
-      //         $($(".answer")[optionNo]).removeClass("wrong");
-      //         $($(".answer")[optionNo]).addClass("correct");
-      //         $($(".answer")[optionNo]).parent().addClass("state-success");
-      //     } else {
-      //         $($(".answer")[optionNo]).removeClass("correct");
-      //         $($(".answer")[optionNo]).addClass("wrong");
-      //         $($(".answer")[optionNo]).parent().addClass("state-error");
-      //     }
-      //     $(".answer" + optionNo).removeClass("invisible");
-      // }
+
 
       function __generateFeedback() {
         for (var prop in __feedback) {
@@ -749,6 +667,34 @@ define([
         } else {
           __feedback.incorrect = true;
         }
+      }
+
+      function __resetAnswers() {
+        __pluginInstance.leoRightItem.reset();
+        saveCurrentState();
+      }
+      function saveCurrentState() {
+        var currState = { configData: { value: JSON.stringify(pluginInstance.leoRightItem.getData()), unit: "" } };
+
+        for (var property in currState) {
+          if (currState.hasOwnProperty(property) && currState[property].value !== undefined) {
+            var interactionMinScore = __content.score.min;
+            var optionsCount = Object.keys(__content.optionsJSON).length;
+            var interactionMaxScore = __content.score.max / optionsCount;
+
+            var interactionId = getInteractionId(property);
+            if (interactionId != "") {
+              __content.userAnswersJSON[interactionId] = {};
+              __content.userAnswersJSON[interactionId].answer = currState[property].value.toString();
+              if (currState[property].unit != undefined) __content.userAnswersJSON[interactionId].unit = currState[property].unit.toString();
+              __content.userAnswersJSON[interactionId].maxscore = interactionMaxScore;
+              __content.userAnswersJSON[interactionId].score = interactionMinScore;
+              __content.userAnswersJSON[interactionId].status = "incorrect";
+
+            }
+          }
+        }
+        __saveResults(false);
       }
 
       /**
@@ -785,13 +731,13 @@ define([
         }
 
         var interactions = Object.keys(__content.optionsJSON);
-        partiallyCorrect = interactions.some(function(element, index) {
+        partiallyCorrect = interactions.some(function (element, index) {
           if (answers[element] && answers[element].status == "correct") {
             return true;
           }
         });
 
-        correct = interactions.every(function(element, index) {
+        correct = interactions.every(function (element, index) {
           if (answers[element] && answers[element].status == "correct") {
             return true;
           }
@@ -831,6 +777,7 @@ define([
         /* Shell requests a engines config settings.  */
         "handleSubmit": handleSubmit,
         "showGrades": showGrades,
+        "resetAnswers": __resetAnswers,
         "updateLastSavedResults": updateLastSavedResults
       };
     };
