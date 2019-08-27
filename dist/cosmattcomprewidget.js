@@ -181,7 +181,10 @@ define('css!../css/cosmattcomprewidget',[],function(){});
     $(this).empty();
     let type, $container1, $container2, viewJSON, data;
     let leoLeftItem, leoRightItem;
-    let hideScrollContainers = [];
+
+    var self = this;
+    var publishIdAndContainer = new Map(); 
+    var itemReady ;
     let $container = $(this);
 
     //TODO design options object 
@@ -246,7 +249,9 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       if (gridData.height == "scroll" || forceScroll) {
         height = "100%";
       } else {
-        height = "expand";
+        // height = "expand";
+        //let the height be scroll for both , manually set the height so as to prevent rendering of the grid on changing from full screen and min screen and vice versa
+        height = "100%";
       }
 
       let uiStyle = {
@@ -269,18 +274,28 @@ define('css!../css/cosmattcomprewidget',[],function(){});
 
         // 50 px top header , 34 px footer  , 17 px for scrollbar
         // $(container).css("height", "calc(100vh - 101px)");
-        $(container).css("height", "690px");
+       			
+        // let height = window.parent.innerHeight - sum;
+        resizeGridContainers(false, container)
+        // $(container).css("height", height + "px");
+
         // top to be 50px header + 6px buffer
         $(container).css("top", "56px");
         // for auto start end align 
         // $(container).css("height", "100%");
-      }
+      } else {
+        // setHeightContainers.push()
+        debugger;
+        publishIdAndContainer.set(gridData.publishedId , container);
+        // setHeightContainers.push(container, gridData.publishedId);
+      }		     
+
 
 
       return createGrid(gridData.publishedId, container, undefined, uiStyle, false);
     };
 
-    var waitForEl = function (container, selector, callback) {
+    let waitForEl = function (container, selector, callback) {
       if ($(container).find(selector).length) {
         callback($(container).find(selector));
       } else {
@@ -290,11 +305,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       }
     };
 
-    let itemReady = function () {
-      console.log("calling from ready");
-      console.log(leoLeftItem);
-      console.log(leoRightItem);
-    };
+    
     let widgetDimensionChangeHandler = function (args) {
       if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
         $container.trigger("widgetResized", [args]);
@@ -337,7 +348,22 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       // to be set based on requirements
       if (callbacks == undefined) {
         callbacks = {
-          ready: itemReady,
+          ready: function (range, data) { 
+            if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
+              //abs
+            }else{
+              debugger;
+              let container = publishIdAndContainer.get(leoRightItem.props.uid)
+              if(container != undefined){
+                let height = leoRightItem.getRequiredDimension().height;
+                height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
+                $(container).css("height", height + "px");
+              }
+            // publishIdAndContainer.get()
+            // leoRightItem.props.uid
+      
+            }
+          },
           widgetDimensionChange: widgetDimensionChangeHandler,
           change: function (range, data) { console.log("Range is " + range + "and value is " + data) },
           reset: function resetItemHandler(args) { console.log("reset args", args) },
@@ -364,11 +390,11 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       }
 
     };
-    var updateInputs = function (params) {
+    let updateInputs = function (params) {
 
     }
 
-    var markAnswers = function (params) {
+    let markAnswers = function (params) {
     };
 
 
@@ -378,25 +404,54 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       $container.on("fullScreenEvent", function (event, args) {
         // reload right grid with forceScroll as true
         $container2 = $container.find('#container2');
-        $container2.empty();
-        setDataAndCreateGrids(data.rightSideData, $container2[0], true);
+        // $container2.empty();
+        // setDataAndCreateGrids(data.rightSideData, $container2[0], true);
         resizeGridContainers(true);
       });
+
+      $container.on("minScreenEvent", function (event, args) {
+        if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
+          //abs
+        }else{
+          debugger;
+          let container = publishIdAndContainer.get(leoRightItem.props.uid)
+          if(container != undefined){
+            let height = leoRightItem.getRequiredDimension().height;
+            height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
+            $(container).css("height", height + "px");
+          }
+        
+  
+        }
+  
+      });
+
+
     };
-    let resizeGridContainers = function (isFullScreen) {
+    let resizeGridContainers = function  (isFullScreen, container) {
       if (isFullScreen) {
         //resize the containers based on the height of bottom bar and top nav bar
         let bottomBarHt = $('.bottomBar-cosmatengine').outerHeight(true);
         let topBarHt = $('.topBar-cosmatengine').outerHeight(true);
         let sum = bottomBarHt + topBarHt + 10;   //10px buffer
-
+        debugger;
+        let height = window.parent.innerHeight - sum;
         //set height of container1 and container2
-        $('#container1', $container).css("height", "calc(100vh - " + sum + "px)");
-        $('#container2', $container).css("height", "calc(100vh - " + sum + "px)");
+        $('#container1', $container).css("height", height + "px");
+        $('#container2', $container).css("height", height + "px");
 
-        // todo check resize 
+        // todo check resize
         $('#placeholder').css('margin', '0');
         $('#placeholder').removeClass('ribbon-adjustments');
+       
+      } else {
+        debugger;
+        let bottomBarHt = $('.app-footer', $(window.parent.document)).outerHeight(true);
+        let topBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
+        let sum = bottomBarHt + topBarHt + 10;   //10px buffer
+        let height = window.parent.innerHeight - sum;
+        //set height of container1 and container2
+        $(container).css("height", height + "px");
 
       }
 
@@ -649,6 +704,8 @@ define('cosmattcomprewidget',[
           $questionContainer.find(".minScreen").show();
           
           __isFullScreen = true;
+          // reset  the body scroll bar on goint to min screen
+          $('body', window.parent.document).css("overflow", "hidden");
         }));
 
         $backBtn.bind("click", (function () {
@@ -691,7 +748,7 @@ define('cosmattcomprewidget',[
 
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
-
+          $pluginArea.trigger("minScreenEvent", ["bim", "baz"]);
 
         }));
 
@@ -760,8 +817,12 @@ define('cosmattcomprewidget',[
 
 
           if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
+            __config.RESIZE_MODE = "auto";
             activityAdaptor.autoResizeActivityIframe();
-          }
+          }else{
+            __config.RESIZE_MODE = "manual";
+            __config.RESIZE_HEIGHT = window.parent.innerHeight;
+          }		          
         });
 
 

@@ -228,6 +228,8 @@ define([
           $questionContainer.find(".minScreen").show();
           
           __isFullScreen = true;
+          // reset  the body scroll bar on goint to min screen
+          $('body', window.parent.document).css("overflow", "hidden");
         }));
 
         $backBtn.bind("click", (function () {
@@ -270,7 +272,7 @@ define([
 
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
-
+          $pluginArea.trigger("minScreenEvent", ["bim", "baz"]);
 
         }));
 
@@ -339,8 +341,12 @@ define([
 
 
           if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
+            __config.RESIZE_MODE = "auto";
             activityAdaptor.autoResizeActivityIframe();
-          }
+          }else{
+            __config.RESIZE_MODE = "manual";
+            __config.RESIZE_HEIGHT = window.parent.innerHeight;
+          }		          
         });
 
 
