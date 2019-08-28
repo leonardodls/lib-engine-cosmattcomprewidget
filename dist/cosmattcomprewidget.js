@@ -231,17 +231,18 @@ define('css!../css/cosmattcomprewidget',[],function(){});
         //add div to the main container
         $container.append($div);
 
-        if(data.leftSideData.type == "html"){
+        if (data.leftSideData.type == "html") {
           $($container1).css("position", "sticky");
+          // $($container1).css("overflow", "auto");
           resizeGridContainers(false, $container1);
           $container1.append(data.leftSideData.htmlData);
           leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
-        }else{
+        } else {
           leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);
           leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
         }
 
-        
+
       }
       updateContainerItemProperties();
     };
@@ -305,7 +306,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
 
 
 
-      
+
 
       debugger;
       return createGrid(gridData.publishedId, container, undefined, uiStyle, false);
@@ -329,6 +330,10 @@ define('css!../css/cosmattcomprewidget',[],function(){});
         let dim = leoRightItem.getRequiredDimension();
         $container.trigger("widgetResized", { height: dim.height });
       }
+    };
+
+    let widgetChangeHandler = function (range, data, args) {
+      $container.trigger("gridChanged", [range, data, args]);
     };
 
 
@@ -379,8 +384,9 @@ define('css!../css/cosmattcomprewidget',[],function(){});
 
             }
           },
+
           widgetDimensionChange: widgetDimensionChangeHandler,
-          change: function (range, data) { console.log("Range is " + range + "and value is " + data) },
+          change: widgetChangeHandler,
           reset: function resetItemHandler(args) { console.log("reset args", args) },
           hintReveal: function () {
             console.log("Hint Revealed")
@@ -415,8 +421,8 @@ define('css!../css/cosmattcomprewidget',[],function(){});
 
 
     let addListeners = function () {
-
       $container.on("fullScreenEvent", function (event, args) {
+        widget.isFullScreen = true;
         // reload right grid with forceScroll as true
         $container2 = $container.find('#container2');
         // $container2.empty();
@@ -425,6 +431,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       });
 
       $container.on("minScreenEvent", function (event, args) {
+        widget.isFullScreen = false;
         if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
           //abs
         } else {
@@ -450,6 +457,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
         let sum = bottomBarHt + topBarHt + 10;   //10px buffer
         let height = window.parent.innerHeight - sum;
         //set height of container1 and container2
+        // $('#container1', $container).css("overflow", "");
         $('#container1', $container).css("height", height + "px");
         $('#container2', $container).css("height", height + "px");
 
@@ -470,7 +478,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
     };
 
     window.parent.onscroll = function () {
-      
+
       let iframeID = $('.pluginArea').data('widgetData').iframeID;
       let iframeTop = $(window.parent.document).find('#' + 'iframe_' + iframeID).offset().top; //209
 
@@ -492,7 +500,23 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       }
     };
     window.parent.onresize = function () {
+      let isFullScreen = $('.pluginArea').data('widgetData').isFullScreen;
+
+      //if full screen resize both containers
+      //if not full screen rezise only left container
+      if (isFullScreen) {
+        resizeGridContainers(isFullScreen);
+      } else {
+        let $container = $('#' + 'container1');
+
+        resizeGridContainers(isFullScreen, $container[0]);
+      }
+
+
+
     };
+
+
 
 
     addListeners();
@@ -721,7 +745,8 @@ define('cosmattcomprewidget',[
           //hide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
             if ($(this).css("position") === 'fixed') {
-              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')) {
+              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')
+                || $(this).hasClass('sidebar-container')) {
                 return this;
               }
             }
@@ -760,7 +785,8 @@ define('cosmattcomprewidget',[
           // unhide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
             if ($(this).css("position") === 'fixed') {
-              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')) {
+              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')
+                || $(this).hasClass('sidebar-container')) {
                 return this;
               }
             }
@@ -832,7 +858,9 @@ define('cosmattcomprewidget',[
         });
 
 
+        $pluginArea.on("gridChanged", function (event, range, data, args) {
 
+        });
 
 
       }

@@ -207,7 +207,8 @@ define([
           //hide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
             if ($(this).css("position") === 'fixed') {
-              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')) {
+              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')
+                || $(this).hasClass('sidebar-container')) {
                 return this;
               }
             }
@@ -246,7 +247,8 @@ define([
           // unhide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
             if ($(this).css("position") === 'fixed') {
-              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')) {
+              if ($(this).hasClass('app-footer') || $(this).hasClass('navbar')
+                || $(this).hasClass('sidebar-container')) {
                 return this;
               }
             }
@@ -318,7 +320,9 @@ define([
         });
 
 
+        $pluginArea.on("gridChanged", function (event, range, data, args) {
 
+        });
 
 
       }
