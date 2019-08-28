@@ -2,19 +2,24 @@
 
 (function ($) {
 
-  $.fn.comprehensiveWidget = function (options) {
+  $.fn.comprehensiveWidget = function (id, options) {
     // replace this data --
     // newHints -resources  - leonardoJSON  -- data 
 
     debugger;
 
+
+
     $(this).empty();
+    let widget = {};
+    widget.iframeID = id;
     let type, $container1, $container2, viewJSON, data;
     let leoLeftItem, leoRightItem;
 
     var self = this;
-    var publishIdAndContainer = new Map(); 
-    var itemReady ;
+
+    var publishIdAndContainer = new Map();
+    var itemReady;
     let $container = $(this);
 
     //TODO design options object 
@@ -56,8 +61,17 @@
         //add div to the main container
         $container.append($div);
 
-        leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);
-        leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
+        if(data.leftSideData.type == "html"){
+          $($container1).css("position", "sticky");
+          resizeGridContainers(false, $container1);
+          $container1.append(data.leftSideData.htmlData);
+          leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
+        }else{
+          leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);
+          leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
+        }
+
+        
       }
       updateContainerItemProperties();
     };
@@ -104,7 +118,7 @@
 
         // 50 px top header , 34 px footer  , 17 px for scrollbar
         // $(container).css("height", "calc(100vh - 101px)");
-       			
+
         // let height = window.parent.innerHeight - sum;
         resizeGridContainers(false, container)
         // $(container).css("height", height + "px");
@@ -115,13 +129,15 @@
         // $(container).css("height", "100%");
       } else {
         // setHeightContainers.push()
-        debugger;
-        publishIdAndContainer.set(gridData.publishedId , container);
+        publishIdAndContainer.set(gridData.publishedId, container);
         // setHeightContainers.push(container, gridData.publishedId);
-      }		     
+      }
 
 
 
+      
+
+      debugger;
       return createGrid(gridData.publishedId, container, undefined, uiStyle, false);
     };
 
@@ -135,7 +151,7 @@
       }
     };
 
-    
+
     let widgetDimensionChangeHandler = function (args) {
       if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
         $container.trigger("widgetResized", [args]);
@@ -178,20 +194,19 @@
       // to be set based on requirements
       if (callbacks == undefined) {
         callbacks = {
-          ready: function (range, data) { 
+          ready: function (range, data) {
             if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
               //abs
-            }else{
-              debugger;
+            } else {
               let container = publishIdAndContainer.get(leoRightItem.props.uid)
-              if(container != undefined){
+              if (container != undefined) {
                 let height = leoRightItem.getRequiredDimension().height;
                 height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
                 $(container).css("height", height + "px");
               }
-            // publishIdAndContainer.get()
-            // leoRightItem.props.uid
-      
+              // publishIdAndContainer.get()
+              // leoRightItem.props.uid
+
             }
           },
           widgetDimensionChange: widgetDimensionChangeHandler,
@@ -242,29 +257,27 @@
       $container.on("minScreenEvent", function (event, args) {
         if (Object.keys(leoRightItem).length === 0 && leoRightItem.constructor === Object) {
           //abs
-        }else{
-          debugger;
+        } else {
           let container = publishIdAndContainer.get(leoRightItem.props.uid)
-          if(container != undefined){
+          if (container != undefined) {
             let height = leoRightItem.getRequiredDimension().height;
             height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
             $(container).css("height", height + "px");
           }
-        
-  
+
+
         }
-  
+
       });
 
 
     };
-    let resizeGridContainers = function  (isFullScreen, container) {
+    let resizeGridContainers = function (isFullScreen, container) {
       if (isFullScreen) {
         //resize the containers based on the height of bottom bar and top nav bar
         let bottomBarHt = $('.bottomBar-cosmatengine').outerHeight(true);
         let topBarHt = $('.topBar-cosmatengine').outerHeight(true);
         let sum = bottomBarHt + topBarHt + 10;   //10px buffer
-        debugger;
         let height = window.parent.innerHeight - sum;
         //set height of container1 and container2
         $('#container1', $container).css("height", height + "px");
@@ -273,9 +286,8 @@
         // todo check resize
         $('#placeholder').css('margin', '0');
         $('#placeholder').removeClass('ribbon-adjustments');
-       
+
       } else {
-        debugger;
         let bottomBarHt = $('.app-footer', $(window.parent.document)).outerHeight(true);
         let topBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
         let sum = bottomBarHt + topBarHt + 10;   //10px buffer
@@ -287,10 +299,36 @@
 
     };
 
+    window.parent.onscroll = function () {
+      
+      let iframeID = $('.pluginArea').data('widgetData').iframeID;
+      let iframeTop = $(window.parent.document).find('#' + 'iframe_' + iframeID).offset().top; //209
+
+      let navBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
+      let container1Height = $('#' + 'container1').outerHeight(true);
+      let iframeHeight = $(window.parent.document).find('#' + 'iframe_' + iframeID).outerHeight(true);
+      let bottomBarHeight = $('.bottomBar-cosmatengine').outerHeight(true);
+      // 17 px for scroll bar and 10 px padding bottom
+      let distFromTop = iframeTop + iframeHeight - container1Height - bottomBarHeight - 17 - 20;
+      if (window.parent.pageYOffset >= distFromTop) {
+        //set some top
+        $("#container1").animate({
+          top: distFromTop + "px"
+        }, 10);
+      } else {
+        $("#container1").animate({
+          top: window.parent.pageYOffset - iframeTop + navBarHt + 0 + "px"
+        }, 10);
+      }
+    };
+    window.parent.onresize = function () {
+    };
+
+
     addListeners();
     createContainer();
 
-
+    $(this).data('widgetData', widget);
     return {
       this: this,
       updateInputs: updateInputs,

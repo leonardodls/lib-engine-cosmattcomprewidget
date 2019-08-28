@@ -8,6 +8,7 @@
   flex: 0 1 auto;
   min-height: 200px;
   min-width: 150px;
+  overflow: auto;
 }
 .acc-comprehensive-container .right-container {
   flex: 1 0 150px;

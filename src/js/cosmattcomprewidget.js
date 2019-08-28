@@ -172,8 +172,7 @@ define([
         //add callback function to appData
         __content.appData.options.data.assessmentCallback = userResponseHandler;
         __content.appData.options.data.autoResizer = autoResizeEngine;
-        __pluginInstance = $pluginArea.comprehensiveWidget(__content.appData.options.data);
-
+        __pluginInstance = $pluginArea.comprehensiveWidget(activityAdaptor.getId(), __content.appData.options.data);
         $questionContainer.append($topBar);
         $questionContainer.append($pluginArea);
 
@@ -190,7 +189,7 @@ define([
 
         var resetButton = $('<div class="btn btn-primary resetButton" style="margin-left: 10px;">Reset</div>');
         $bottomBar.append(resetButton);
-        var submitButton = $('<div class="btn btn-primary resetButton" style="margin-left: 10px;">Submit</div>');
+        var submitButton = $('<div class="btn btn-primary submitButton" style="margin-left: 10px;">Submit</div>');
         $bottomBar.append(submitButton);
         $questionContainer.append($bottomBar);
 
@@ -226,7 +225,7 @@ define([
 
           $(this).hide();
           $questionContainer.find(".minScreen").show();
-          
+
           __isFullScreen = true;
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "hidden");
@@ -290,41 +289,10 @@ define([
           window.top.assessment_compre.component.reset();
 
         }));
+        $questionContainer.find(".submitButton").bind("click", (function () {
+          window.top.assessment_compre.component.submitTestBtnClicked();
 
-
-        // debugger;
-        window.parent.onscroll = function () {
-          // var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_Chapter_5_Introduction___ClosingEntries___test-Emded_01');
-          // var iFrame= $('body', window.parent.document).find(".iframeContainer").find('iframe');
-          // iFrame.attr('name', 'ifrCompProb');
-          // $('#container1').animate({
-          //   top : window.parent.pageYOffset + 5 +"px"
-          // },'fast');
-          $('#container1').css('top', window.parent.pageYOffset - 160 + "px");
-
-          // $('html')[0].scrollTop = window.parent.pageYOffset;
-          // document.documentElement.scrollTop = window.parent.pageYOffset;
-          // frames.ifrCompProb.document.documentElement.scrollTop = window.pageYOffset;
-          // $('body')[0].scrollTop = window.parent.pageYOffset;
-          // document.body.scrollTop = window.parent.pageYOffset;
-          // frames.ifrCompProb.document.body.scrollTop = window.pageYOffset; // Google Chrome, Safari, documents without valid doctype
-
-        };
-
-        // window.parent.onresize=function() {
-        //   var iframeContainer = $('body', window.parent.document).find(".iframeContainer");
-        //   window.parent.document.body.style.height = document.body.offsetHeight + parseInt(iframeContainer[0].style.top) + parseInt(iframeContainer[0].style.bottom) + 'px';
-        //   // document.body.style.height = frames.ifr.document.body.offsetHeight + parseInt(document.getElementById('iframe_container').style.top) + parseInt(document.getElementById('iframe_container').style.bottom) + 'px'
-        // };
-        // var $iFrame= $('body', window.parent.document).find(".iframeContainer").find('iframe');
-        // // $iFrame.attr("scrolling", "no");
-        // $iFrame[0].onload=function() {
-        //   var iframeContainer = $('body', window.parent.document).find(".iframeContainer");
-        //   window.parent.document.body.style.height = document.body.offsetHeight + parseInt(iframeContainer[0].style.top) + parseInt(iframeContainer[0].style.bottom) + 'px';
-        //   // onload = "document.body.style.height = frames.ifr.document.body.offsetHeight + parseInt(document.getElementById('iframe_container').style.top) + parseInt(document.getElementById('iframe_container').style.bottom) + 'px'"
-        // }
-
-
+        }));
 
 
         $(elRoot).html($questionContainer);
@@ -343,10 +311,10 @@ define([
           if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
             __config.RESIZE_MODE = "auto";
             activityAdaptor.autoResizeActivityIframe();
-          }else{
+          } else {
             __config.RESIZE_MODE = "manual";
             __config.RESIZE_HEIGHT = window.parent.innerHeight;
-          }		          
+          }
         });
 
 
