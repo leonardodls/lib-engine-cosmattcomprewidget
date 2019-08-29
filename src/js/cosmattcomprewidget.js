@@ -177,20 +177,22 @@ define([
         $questionContainer.append($pluginArea);
 
         let $bottomBar = $('<div class="bottomBar-cosmatengine"></div>');
-        var fullscreen = $('<div class="btn btn-primary fullscreen max-min-toolbar" >Full Screen</div>');
+        $bottomBar.append($('<div class="fill-space"></div>'));
+        var fullscreen = $('<div class="link-btn fullscreen max-min-toolbar" >Full Screen</div>');
         $bottomBar.append(fullscreen);
 
-        var minScreen = $('<div class="btn  btn-primary minScreen max-min-toolbar" style="display: none;">Min Screen</div>');
+        var minScreen = $('<div class="link-btn minScreen max-min-toolbar" style="display: none;">Min Screen</div>');
         $bottomBar.append(minScreen);
 
 
-        var checkMyWork = $('<div class="btn btn-primary  checkMyWork">Check My Work</div>');
+        var checkMyWork = $('<div class="link-btn  checkMyWork">Check My Work</div>');
         $bottomBar.append(checkMyWork);
 
-        var resetButton = $('<div class="btn btn-primary resetButton" style="margin-left: 10px;">Reset</div>');
+        var resetButton = $('<div class="link-btn resetButton" style="margin-left: 10px;">Reset</div>');
         $bottomBar.append(resetButton);
-        var submitButton = $('<div class="btn btn-primary submitButton" style="margin-left: 10px;">Submit</div>');
+        var submitButton = $('<div class="link-btn submitButton" style="margin-left: 10px;">Submit</div>');
         $bottomBar.append(submitButton);
+        $bottomBar.append($('<div class="fill-space"></div>'));
         $questionContainer.append($bottomBar);
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
@@ -225,7 +227,7 @@ define([
           });
 
           $(this).hide();
-          
+
           $topBar.toggle();  //display top bar
           $questionContainer.find(".minScreen").show();
 
@@ -271,7 +273,7 @@ define([
           //todo bottom bar properties to be changed
 
           $(this).hide();
-          
+
           $topBar.toggle();  //hide top bar
           $questionContainer.find(".fullscreen").show();
 
@@ -325,12 +327,13 @@ define([
 
 
         $pluginArea.on("gridChanged", function (event, range, data, args) {
+          saveCurrentState();
 
         });
 
 
         // initial UI setup
-        $topBar.hide(); 
+        $topBar.hide();
 
 
       }
@@ -658,9 +661,18 @@ define([
         __pluginInstance.leoRightItem.reset();
         saveCurrentState();
       }
-      function saveCurrentState() {
-        var currState = { configData: { value: JSON.stringify(pluginInstance.leoRightItem.getData()), unit: "" } };
 
+      function __clearGrades() {
+        __pluginInstance.leoRightItem.clearFeedback();
+      }
+
+      function __destroy() {
+        __pluginInstance.leoRightItem.destroy();
+      }
+
+      function saveCurrentState() {
+        
+        var currState = { configData: { value: JSON.stringify(__pluginInstance.leoRightItem.getData()), unit: "" } };
         for (var property in currState) {
           if (currState.hasOwnProperty(property) && currState[property].value !== undefined) {
             var interactionMinScore = __content.score.min;
@@ -763,7 +775,9 @@ define([
         "handleSubmit": handleSubmit,
         "showGrades": showGrades,
         "resetAnswers": __resetAnswers,
-        "updateLastSavedResults": updateLastSavedResults
+        "updateLastSavedResults": updateLastSavedResults,
+        "clearGrades": __clearGrades,
+        "destroy": __destroy
       };
     };
   });

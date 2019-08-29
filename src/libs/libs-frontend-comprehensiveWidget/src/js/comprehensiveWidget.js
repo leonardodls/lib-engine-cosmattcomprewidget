@@ -5,13 +5,15 @@
     $(this).empty();
     let widget = {
       iframeID: id,
+      options : options,
       scrollingContainer: undefined,
       scrollingLeoItem: undefined,
       scrollItemPublishID: undefined,
       expandContainer: undefined,
       expandLeoItem: undefined,
       leoLeftItem: undefined,
-      leoRightItem: undefined
+      leoRightItem: undefined,
+      hasHTML: false
 
     };
 
@@ -173,7 +175,12 @@
 
             // if not fullscreen
             //if 2nd call back with both ready
-            if (Object.keys(widget.expandLeoItem).length !== 0 &&
+
+            // if html then only wait for scrolling item 
+            if (widget.hasHTML) {
+              //only right is present
+              resizeGridContainers(false, widget.scrollingContainer);
+            } else if (Object.keys(widget.expandLeoItem).length !== 0 &&
               Object.keys(widget.scrollingLeoItem).length !== 0) {
               resizeGridContainers(false, widget.scrollingContainer);
             }
@@ -242,7 +249,7 @@
       });
       $container.on("minScreenEvent", function (event, args) {
         widget.isFullScreen = false;
-        if (Object.keys(widget.leoRightItem).length === 0 && widget.leoRightItem.constructor === Object) {
+        if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0 ) {
           //abs
         } else {
           let container = publishIdAndContainer.get(widget.leoRightItem.props.uid)
@@ -268,6 +275,25 @@
         $('#placeholder').css('margin', '0');
         $('#placeholder').removeClass('ribbon-adjustments');
       } else {
+
+        if(widget.hasHTML){
+          return;
+
+          // left container
+
+
+          // right item will be there
+          
+          if (widget.options.rightSideData) {
+            if(widget.leoRightItem && widget.leoRightItem == widget.expandLeoItem ){
+              //abc
+            }
+          }
+
+          return;
+        }
+
+
         // set height of scroll container 
         let bottomBarHt = $('.app-footer', $(window.parent.document)).outerHeight(true);
         let topBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
@@ -277,7 +303,7 @@
 
         // check container height should not be greater than the grid hieght 
 
-        if (Object.keys(widget.scrollingLeoItem).length !== 0) {
+        if (widget.scrollingLeoItem && Object.keys(widget.scrollingLeoItem).length !== 0) {
           gridHeight = widget.scrollingLeoItem.getRequiredDimension().height;
         }
         if (gridHeight !== -1 && gridHeight < height) {
@@ -288,7 +314,7 @@
         }
 
         ////////////////////reset the height of the expand grid as well
-        if (Object.keys(widget.expandLeoItem).length !== 0) {
+        if (widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
           let height = widget.expandLeoItem.getRequiredDimension().height;
           height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar
           $(widget.expandContainer).css("height", height + "px");

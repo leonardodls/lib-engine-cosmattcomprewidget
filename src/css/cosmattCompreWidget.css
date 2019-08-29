@@ -54,9 +54,10 @@
    position: fixed;
     width: 100%;
     bottom: 0;
-    background: #f5f5f5;
+    background: #FFFFFF;
     z-index: 10;
     height: 54px;
+    display: flex;
 }
 
 .minScreen , .fullscreen{
@@ -66,4 +67,21 @@
 
 .pluginArea{
    padding-bottom: 54px; 
+}
+
+.link-btn {
+   font-family: "Open Sans";
+    display: inline-block;
+    border-radius: 0;
+    line-height: 1.5;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    padding: 0.375rem 1rem;
+    font-size: 1rem;
+    color: #01579b;
+}
+
+.fill-space{
+   flex: 1 1 auto;
 }
