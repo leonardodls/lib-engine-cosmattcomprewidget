@@ -225,6 +225,8 @@ define([
           });
 
           $(this).hide();
+          
+          $topBar.toggle();  //display top bar
           $questionContainer.find(".minScreen").show();
 
           __isFullScreen = true;
@@ -269,6 +271,8 @@ define([
           //todo bottom bar properties to be changed
 
           $(this).hide();
+          
+          $topBar.toggle();  //hide top bar
           $questionContainer.find(".fullscreen").show();
 
           // reset  the body scroll bar on goint to min screen
@@ -323,6 +327,10 @@ define([
         $pluginArea.on("gridChanged", function (event, range, data, args) {
 
         });
+
+
+        // initial UI setup
+        $topBar.hide(); 
 
 
       }
@@ -408,7 +416,6 @@ define([
        * Function to show user grades.
        */
       function showGrades(savedAnswer, reviewAttempt) {
-        debugger;
         console.log("__pluginInstance.leoRightItem", __pluginInstance.leoRightItem);
         if (__pluginInstance.leoRightItem !== undefined) {
           var s = __pluginInstance.leoRightItem.score();
