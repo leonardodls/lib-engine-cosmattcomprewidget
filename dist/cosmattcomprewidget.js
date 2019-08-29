@@ -172,10 +172,11 @@ define('css!../css/cosmattcomprewidget',[],function(){});
 (function ($) {
   $.fn.comprehensiveWidget = function (id, options) {
     debugger;
+   
     $(this).empty();
     let widget = {
       iframeID: id,
-      options : options,
+      options: options,
       scrollingContainer: undefined,
       scrollingLeoItem: undefined,
       scrollItemPublishID: undefined,
@@ -186,6 +187,9 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       hasHTML: false
 
     };
+
+    
+    
 
     let type, $container1, $container2, viewJSON, data;
     // let leoRightItem;
@@ -234,11 +238,17 @@ define('css!../css/cosmattcomprewidget',[],function(){});
         $container.append($div);
 
         if (data.leftSideData.type == "html") {
+          widget.hasHTML = true;
           $($container1).css("position", "sticky");
           // $($container1).css("overflow", "auto");
-          resizeGridContainers(false, $container1);
+          if (data.leftSideData.height == "scroll") {
+            widget.scrollingContainer = $container1[0];
+          } else {
+            widget.expandContainer = $container1[0];
+          }
           $container1.append(data.leftSideData.htmlData);
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
+          resizeGridContainers(false, $container1);
         } else {
           widget.leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
@@ -338,6 +348,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
           ready: function (range, data) {
 
 
+
             if (widget.isFullScreen) {
               resizeGridContainers(true);
               return;
@@ -419,7 +430,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       });
       $container.on("minScreenEvent", function (event, args) {
         widget.isFullScreen = false;
-        if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0 ) {
+        if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0) {
           //abs
         } else {
           let container = publishIdAndContainer.get(widget.leoRightItem.props.uid)
@@ -432,7 +443,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       });
     };
     let resizeGridContainers = function (isFullScreen, scrollContainer) {
-
+try{
 
       if (isFullScreen) {
         //set height of container1 and container2 based on the height of bottom bar and top nav bar
@@ -446,53 +457,82 @@ define('css!../css/cosmattcomprewidget',[],function(){});
         $('#placeholder').removeClass('ribbon-adjustments');
       } else {
 
-        if(widget.hasHTML){
-          return;
-
+        if (widget.hasHTML) {
           // left container
-
-
-          // right item will be there
-          
-          if (widget.options.rightSideData) {
-            if(widget.leoRightItem && widget.leoRightItem == widget.expandLeoItem ){
-              //abc
-            }
+          if (widget.options.view.sidebyside.leftSideData.height == "scroll") {
+            setScrollContainerMS(scrollContainer);
+          } else {
+            let ht = $(widget.expandContainer).find('.html-viewer').outerHeight(true);
+            $(widget.expandContainer).css("height", ht + "px");
           }
 
+          // right item will be there
+          if (widget.options.view.sidebyside.rightSideData.height == "scroll") {
+            if (widget.scrollingLeoItem && widget.leoRightItem == widget.expandLeoItem) {
+              setScrollContainerMS(scrollContainer);
+            }
+          } else {
+            setExpandContainerMS();
+          }
           return;
         }
 
+        setScrollContainerMS(scrollContainer);
+        setExpandContainerMS();
 
-        // set height of scroll container 
-        let bottomBarHt = $('.app-footer', $(window.parent.document)).outerHeight(true);
-        let topBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
-        let sum = bottomBarHt + topBarHt + 10;   //10px buffer
-        let height = window.parent.innerHeight - sum;
-        let gridHeight = -1;
-
-        // check container height should not be greater than the grid hieght 
-
-        if (widget.scrollingLeoItem && Object.keys(widget.scrollingLeoItem).length !== 0) {
-          gridHeight = widget.scrollingLeoItem.getRequiredDimension().height;
-        }
-        if (gridHeight !== -1 && gridHeight < height) {
-          // grid is smaller than viewport height, dont set absolute height
-          $(scrollContainer).css("height", "100%");
-        } else {
-          $(scrollContainer).css("height", height + "px");
-        }
-
-        ////////////////////reset the height of the expand grid as well
-        if (widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
-          let height = widget.expandLeoItem.getRequiredDimension().height;
-          height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar
-          $(widget.expandContainer).css("height", height + "px");
-        }
       }
+
+    }catch(error){
+      console.log(error);
+          }
     };
 
+    //MS stands for min screen
+    let setScrollContainerMS = function (scrollContainer) {
+      try{
+      // set height of scroll container 
+      let bottomBarHt = $('.app-footer', $(window.parent.document)).outerHeight(true);
+      let topBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
+      let sum = bottomBarHt + topBarHt + 10;   //10px buffer
+      let height = window.parent.innerHeight - sum;
+      let gridHeight = -1;
+
+      // check container height should not be greater than the grid hieght 
+
+
+      if (widget.scrollingLeoItem && Object.keys(widget.scrollingLeoItem).length !== 0) {
+        gridHeight = widget.scrollingLeoItem.getRequiredDimension().height;
+      }
+
+      // 8px buffer
+      let setheight = gridHeight + parseInt($(scrollContainer).find('.l-act-player').css('margin-bottom')) + 8 +
+        parseInt($(scrollContainer).css("padding-top")) + parseInt($(scrollContainer).css("padding-bottom"));
+
+      if (gridHeight !== -1 && setheight < height) {
+        debugger;
+        // let setheight = $(scrollContainer).find('.l-act-player').outerHeight(true) +
+        // parseInt($(scrollContainer).css("padding-top")) + parseInt($(scrollContainer).css("padding-bottom"));
+        // grid is smaller than viewport height, dont set absolute height
+        $(scrollContainer).css("height", setheight + "px");
+      } else {
+        $(scrollContainer).css("height", height + "px");
+      }
+
+    }catch(error){
+      console.log(error);
+          }
+    };
+    //MS stands for min screen
+    let setExpandContainerMS = function () {
+      ////////////////////reset the height of the expand grid as well
+      if (widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
+        let height = widget.expandLeoItem.getRequiredDimension().height;
+        height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar
+        $(widget.expandContainer).css("height", height + "px");
+      }
+    };
     window.parent.onscroll = function () {
+      try{
       let iframeID = $('.pluginArea').data('widgetData').iframeID;
       let iframeTop = $(window.parent.document).find('#' + 'iframe_' + iframeID).offset().top; //209
       let navBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
@@ -514,9 +554,14 @@ define('css!../css/cosmattcomprewidget',[],function(){});
           top: window.parent.pageYOffset - iframeTop + navBarHt + 0 + "px"
         }, 0, 'linear');
       }
+
+    }catch(error){
+      console.log(error);
+          }
     };
 
     window.parent.onresize = function () {
+      widgetDimensionChangeHandler();
       let isFullScreen = $('.pluginArea').data('widgetData').isFullScreen;
       //if full screen resize both containers
       //if not full screen rezise only scrolling container
@@ -541,6 +586,8 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       leoLeftItem: widget.leoLeftItem,
       leoRightItem: widget.leoRightItem
     };
+     
+   
   }
 })(jQuery);
 define("../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js", function(){});
