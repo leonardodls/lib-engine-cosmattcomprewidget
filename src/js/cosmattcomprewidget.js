@@ -31,7 +31,7 @@
 // 8:23 22/06/2017
 
 define([
-
+  'css!../../node_modules/font-awesome/css/font-awesome.min.css',
   'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
   'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
   'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
@@ -176,24 +176,47 @@ define([
         $questionContainer.append($topBar);
         $questionContainer.append($pluginArea);
 
+        
+       // $questionContainer.append($separeator);
         let $bottomBar = $('<div class="bottomBar-cosmatengine"></div>');
-        $bottomBar.append($('<div class="fill-space"></div>'));
-        var fullscreen = $('<div class="link-btn fullscreen max-min-toolbar" >Full Screen</div>');
-        $bottomBar.append(fullscreen);
+            $questionContainer.append($bottomBar);
+        let $separeator =  $('<div class="separator"></div>');
+        $bottomBar.append($separeator);
 
-        var minScreen = $('<div class="link-btn minScreen max-min-toolbar" style="display: none;">Min Screen</div>');
-        $bottomBar.append(minScreen);
+        let $toolbarContainer = $('<div class="toolbar-container"></div>') ;
+        $bottomBar.append($toolbarContainer);
 
+        //$toolbarContainer.append($('<div class="fill-space"></div>'));
 
-        var checkMyWork = $('<div class="link-btn  checkMyWork">Check My Work</div>');
-        $bottomBar.append(checkMyWork);
+        var $rightContainer = $('<div class="rightContainer" ></div>');
+        var $leftContainer = $('<div class="leftContainer" ></div>');
+        $toolbarContainer.append($leftContainer);
+        $toolbarContainer.append($rightContainer);
 
-        var resetButton = $('<div class="link-btn resetButton" style="margin-left: 10px;">Reset</div>');
-        $bottomBar.append(resetButton);
-        var submitButton = $('<div class="link-btn submitButton" style="margin-left: 10px;">Submit</div>');
-        $bottomBar.append(submitButton);
-        $bottomBar.append($('<div class="fill-space"></div>'));
-        $questionContainer.append($bottomBar);
+        var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
+        $rightContainer.append(submitButton);
+
+    
+
+        var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
+        $leftContainer.append(checkMyWork);
+
+        
+
+        var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
+        $leftContainer.append(resetButton);
+
+        
+
+         var fullscreen = $('<button class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+        $leftContainer.append(fullscreen);
+
+        var minScreen = $('<button class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
+        $leftContainer.append(minScreen);
+
+        
+       // $toolbarContainer.append($('<div class="fill-space"></div>'));
+    
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
@@ -287,10 +310,13 @@ define([
 
 
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          $(this).text(window.top.assessment_compre.component.checkMyWorkText);
-
-
-
+          
+          if(window.top.assessment_compre.component.checkMyWorkText === 'Check My Work'){
+            $(this).html( '<i class="fa fa-check mr-2"></i>'+window.top.assessment_compre.component.checkMyWorkText);
+          }
+          else{
+             $(this).html( '<i class="fa fa-refresh mr-2"></i>'+window.top.assessment_compre.component.checkMyWorkText);
+          }
         }));
 
         $questionContainer.find(".resetButton").bind("click", (function () {
