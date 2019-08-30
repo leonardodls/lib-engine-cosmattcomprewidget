@@ -49,6 +49,8 @@
       if (type == 1) {
 
         //adding container
+        
+        $div.append('<div class="fill-space"></div>');
         $container1 = $('<div id="container1" class="left-container sideBySide"></div>');
         $div.append($container1);
         //append splitter and make it resizable
@@ -63,6 +65,7 @@
         //adding right container
         $container2 = $('<div id="container2" class="right-container sideBySide"></div>');
         $div.append($container2);
+        $div.append('<div class="fill-space"></div>');
 
         //add div to the main container
         $container.append($div);
@@ -80,14 +83,18 @@
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
           resizeGridContainers(false, $container1);
         } else {
+          
           widget.leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
+          
         }
       }
       updateContainerItemProperties();
     };
 
     let updateContainerItemProperties = function () {
+      //temporarily removing
+      return;
       //default 50-50 seperation
       let width = data.ratio[0];
       if (width.includes("px") || width.includes("%")) {
@@ -105,7 +112,8 @@
 
       let uiStyle = {
         height: height,
-        horizontalAlignment: 'center'
+        horizontalAlignment: 'center',
+        widgetStyles : "{'box-shadow': 'none', 'border': 'none', 'margin': '0px'}"
       };
 
       //wait for grid to load
@@ -196,35 +204,6 @@
               resizeGridContainers(false, widget.scrollingContainer);
             }
 
-            // check if current leoItem if is of scroll , resize it appropriately
-            // if (Object.keys(widget.leoLeftItem).length !== 0 &&
-            // widget.leoLeftItem.props.uid == widget.scrollItemPublishID) {
-            //   resizeGridContainers(false, widget.scrollingContainer);
-            // } else if (Object.keys(widget.leoRightItem).length !== 0 &&
-            //   widget.leoRightItem.props.uid == widget.scrollItemPublishID) {
-            //   resizeGridContainers(false, widget.scrollingContainer);
-            // }
-            // let container, height;
-            // let found = false;
-            // // dont know the call back is of left or right so keep guessing
-            // if (Object.keys(widget.leoLeftItem).length !== 0) {
-            //   container = publishIdAndContainer.get(widget.leoLeftItem.props.uid);
-            //   if (container != undefined) {
-            //     found = true;
-            //   }
-            //   height = widget.leoLeftItem.getRequiredDimension().height;
-            // }
-            // if (!found && Object.keys(widget.leoRightItem).length !== 0) {
-            //   container = publishIdAndContainer.get(widget.leoRightItem.props.uid);
-            //   if (container != undefined) {
-            //     found = true;
-            //   }
-            //   height = widget.leoRightItem.getRequiredDimension().height;
-            // }
-            // if (found) {
-            //   height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
-            //   $(container).css("height", height + "px");
-            // }
 
 
 
@@ -274,7 +253,14 @@
     };
     let resizeGridContainers = function (isFullScreen, scrollContainer) {
 try{
-
+  let ht  =$('.k-spreadsheet-view-size', $('#container1', $container) ).outerWidth(true);
+  if(ht!=undefined){
+    $('#container1', $container).css('max-width',ht + 50+  "px" );
+  }
+  let ht1  =$('.k-spreadsheet-view-size', $('#container2', $container) ).outerWidth(true);
+  if(ht1!=undefined){
+  $('#container2', $container).css('max-width',ht1 + 50+  "px" );
+  }
       if (isFullScreen) {
         //set height of container1 and container2 based on the height of bottom bar and top nav bar
         let bottomBarHt = $('.bottomBar-cosmatengine').outerHeight(true);
@@ -283,6 +269,8 @@ try{
         let height = window.parent.innerHeight - sum;
         $('#container1', $container).css("height", height + "px");
         $('#container2', $container).css("height", height + "px");
+
+
         $('#placeholder').css('margin', '0');
         $('#placeholder').removeClass('ribbon-adjustments');
       } else {

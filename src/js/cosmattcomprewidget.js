@@ -156,18 +156,26 @@ define([
 
         /* ------ VALIDATION BLOCK END -------- */
         var $questionContainer = $('<div class="cosmattcomprewidget-engine"></div>');
-        var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="container1"   style="width: 100%;"  ></div></nav>');
+        var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="question-container"></div></nav>');
 
 
-        var $questionArea = $('<span class="text-primary question-text"></span>');
-        $topBar.find('.container1').append($questionArea);
+        var $questionArea = $('<div class="question-text"></div>');
+        $topBar.find('.question-container').append($questionArea);
 
-        var $backBtn = $('<button class="backbtn btn-primary btn  pull-right" style="margin-right: 10px;;display: none;">Back</button>');
-        $topBar.find('.container1').append($backBtn);
+        var $questionHeading = $('<div class="question-heading"></div>');
+        $questionArea.append($questionHeading);
+
+        var $questionInstruction = $('<div class="questionInstruction"></div>');
+        $questionArea.append($questionInstruction);
+
+        var $backBtn = $('<div class="backbtn"><i class="fa fa-times"></i></div>');
+        $topBar.find('.question-container').append($backBtn);
 
         var $pluginArea = $('<div class="pluginArea"></div>');
 
-        $questionArea.html(__content.questionText);
+        $questionInstruction.html(__content.questionText);
+
+        $questionHeading.html(__content.instructionText);
 
         //add callback function to appData
         __content.appData.options.data.assessmentCallback = userResponseHandler;
@@ -176,14 +184,14 @@ define([
         $questionContainer.append($topBar);
         $questionContainer.append($pluginArea);
 
-        
-       // $questionContainer.append($separeator);
+
+        // $questionContainer.append($separeator);
         let $bottomBar = $('<div class="bottomBar-cosmatengine"></div>');
-            $questionContainer.append($bottomBar);
-        let $separeator =  $('<div class="separator"></div>');
+        $questionContainer.append($bottomBar);
+        let $separeator = $('<div class="separator"></div>');
         $bottomBar.append($separeator);
 
-        let $toolbarContainer = $('<div class="toolbar-container"></div>') ;
+        let $toolbarContainer = $('<div class="toolbar-container"></div>');
         $bottomBar.append($toolbarContainer);
 
         //$toolbarContainer.append($('<div class="fill-space"></div>'));
@@ -196,27 +204,27 @@ define([
         var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
         $rightContainer.append(submitButton);
 
-    
+
 
         var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
         $leftContainer.append(checkMyWork);
 
-        
+
 
         var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
         $leftContainer.append(resetButton);
 
-        
 
-         var fullscreen = $('<button class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+
+        var fullscreen = $('<button class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
         $leftContainer.append(fullscreen);
 
         var minScreen = $('<button class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
         $leftContainer.append(minScreen);
 
-        
-       // $toolbarContainer.append($('<div class="fill-space"></div>'));
-    
+
+        // $toolbarContainer.append($('<div class="fill-space"></div>'));
+
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
@@ -224,7 +232,7 @@ define([
         //iframeArea.find('html').css('overflow','hidden');
         $questionContainer.find(".fullscreen").bind("click", (function () {
           //show back button
-          $backBtn.toggle();
+          $backBtn.show();
 
           $pluginArea.trigger("fullScreenEvent", ["bim", "baz"]);
 
@@ -270,7 +278,7 @@ define([
         $questionContainer.find(".minScreen").bind("click", (function () {
 
           __isFullScreen = false;
-          $backBtn.toggle();
+          $backBtn.hide();
           // unhide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
             if ($(this).css("position") === 'fixed') {
@@ -310,12 +318,12 @@ define([
 
 
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          
-          if(window.top.assessment_compre.component.checkMyWorkText === 'Check My Work'){
-            $(this).html( '<i class="fa fa-check mr-2"></i>'+window.top.assessment_compre.component.checkMyWorkText);
+
+          if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
+            $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
           }
-          else{
-             $(this).html( '<i class="fa fa-refresh mr-2"></i>'+window.top.assessment_compre.component.checkMyWorkText);
+          else {
+            $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
           }
         }));
 
@@ -445,17 +453,17 @@ define([
        * Function to show user grades.
        */
       function showGrades(savedAnswer, reviewAttempt) {
-        console.log("__pluginInstance.leoRightItem", __pluginInstance.leoRightItem);
-        if (__pluginInstance.leoRightItem !== undefined) {
-          var s = __pluginInstance.leoRightItem.score();
-          __pluginInstance.leoRightItem.displayFeedback(s);
-
-          __updateAnsStatus(s);
-          /* Saving Answer. */
-          __saveResults(false);
-
+        try {
+          if (__pluginInstance.leoRightItem !== undefined && Object.keys(__pluginInstance.leoRightItem).length !== 0) {
+            var s = __pluginInstance.leoRightItem.score();
+            __pluginInstance.leoRightItem.displayFeedback(s);
+            __updateAnsStatus(s);
+            /* Saving Answer. */
+            __saveResults(false);
+          }
+        } catch (e) {
+          console.log(e);
         }
-
       }
 
       function __updateAnsStatus(s) {
@@ -697,7 +705,7 @@ define([
       }
 
       function saveCurrentState() {
-        
+
         var currState = { configData: { value: JSON.stringify(__pluginInstance.leoRightItem.getData()), unit: "" } };
         for (var property in currState) {
           if (currState.hasOwnProperty(property) && currState[property].value !== undefined) {
