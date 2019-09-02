@@ -14,11 +14,16 @@
       expandLeoItem: undefined,
       leoLeftItem: undefined,
       leoRightItem: undefined,
-      hasHTML: false
+      hasHTML: false,
+      isFullScreen : false
 
     };
 
-
+    
+    // //temp hack to know if full screen, reset call bug issue
+    // if( $('.topBar-cosmatengine').is(":visible")){
+    //   widget.isFullScreen = true;
+    // }
 
 
     let type, $container1, $container2, viewJSON, data;
@@ -81,7 +86,9 @@
           }
           $container1.append(data.leftSideData.htmlData);
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
-          resizeGridContainers(false, $container1);
+          
+          //if is 
+          resizeGridContainers(widget.isFullScreen, $container1);
         } else {
 
           widget.leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);

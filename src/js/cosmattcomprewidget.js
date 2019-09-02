@@ -328,11 +328,16 @@ define([
         }));
 
         $questionContainer.find(".resetButton").bind("click", (function () {
-          window.top.assessment_compre.component.reset();
+          try{
+            __resetAnswers() ;
+          // window.top.assessment_compre.component.reset();
+          }catch(e){
+            console.log(e);
+          }
 
         }));
         $questionContainer.find(".submitButton").bind("click", (function () {
-          window.top.assessment_compre.component.submitTestBtnClicked();
+          // window.top.assessment_compre.component.submitTestBtnClicked();
 
         }));
 
