@@ -258,12 +258,23 @@
         if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0) {
           //abs
         } else {
-          let container = publishIdAndContainer.get(widget.leoRightItem.props.uid)
-          if (container != undefined) {
-            let height = widget.leoRightItem.getRequiredDimension().height;
-            height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
-            $(container).css("height", height + "px");
+          // let container = publishIdAndContainer.get(widget.leoRightItem.props.uid)
+          // if (container != undefined) {
+          //   let height = widget.leoRightItem.getRequiredDimension().height;
+          //   height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
+          //   $(container).css("height", height + "px");
+          // }
+          
+
+          // reexpand the expanding container
+          if (widget.expandContainer != undefined && widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0 ) {
+            let height = widget.expandLeoItem.getRequiredDimension().height;
+            height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
+            $(widget.expandContainer).css("height", height + "px");
+
           }
+
+
         }
       });
     };
@@ -284,8 +295,51 @@
           let topBarHt = $('.topBar-cosmatengine').outerHeight(true);
           let sum = bottomBarHt + topBarHt + 10;   //10px buffer
           let height = window.parent.innerHeight - sum;
-          $('#container1', $container).css("height", height + "px");
-          $('#container2', $container).css("height", height + "px");
+
+
+
+          let gridHeight = -1;
+ // check container height should not be greater than the grid hieght 
+ if (widget.leoLeftItem && Object.keys(widget.leoLeftItem).length !== 0) {
+  gridHeight = widget.leoLeftItem.getRequiredDimension().height;
+}
+          // 8px buffer
+        let setheight = gridHeight + parseInt($('#container1').find('.l-act-player').css('margin-bottom')) + 8 +
+        parseInt($('#container1').css("padding-top")) + parseInt($('#container1').css("padding-bottom"));
+
+      if (gridHeight !== -1 && setheight < height) {
+        debugger;
+        // let setheight = $(scrollContainer).find('.l-act-player').outerHeight(true) +
+        // parseInt($(scrollContainer).css("padding-top")) + parseInt($(scrollContainer).css("padding-bottom"));
+        // grid is smaller than viewport height, dont set absolute height
+        $('#container1').css("height", setheight + "px");
+      } else {
+        $('#container1').css("height", height + "px");
+      }
+
+
+
+       gridHeight = -1;
+ // check container height should not be greater than the grid hieght 
+ if (widget.leoRightItem && Object.keys(widget.leoRightItem).length !== 0) {
+  gridHeight = widget.leoRightItem.getRequiredDimension().height;
+}
+          // 8px buffer
+         setheight = gridHeight + parseInt($('#container2').find('.l-act-player').css('margin-bottom')) + 8 +
+        parseInt($('#container2').css("padding-top")) + parseInt($('#container2').css("padding-bottom"));
+
+      if (gridHeight !== -1 && setheight < height) {
+        debugger;
+        // grid is smaller than viewport height, dont set absolute height
+        $('#container2').css("height", setheight + "px");
+      } else {
+        $('#container2').css("height", height + "px");
+      }
+
+
+
+          // $('#container1', $container).css("height", height + "px");
+          // $('#container2', $container).css("height", height + "px");
 
 
           $('#placeholder').css('margin', '0');

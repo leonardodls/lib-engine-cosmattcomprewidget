@@ -354,6 +354,7 @@ define([
         //pluginArea Resize event binding
         $pluginArea.on("widgetResized", function (event, args) {
 
+          try{
 
           if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
             __config.RESIZE_MODE = "auto";
@@ -362,6 +363,11 @@ define([
             __config.RESIZE_MODE = "manual";
             __config.RESIZE_HEIGHT = window.parent.innerHeight;
           }
+
+        }catch(e){
+          console.log(e);
+        }
+
         });
 
 
