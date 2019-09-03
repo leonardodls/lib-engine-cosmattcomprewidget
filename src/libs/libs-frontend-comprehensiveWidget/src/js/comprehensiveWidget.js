@@ -15,11 +15,11 @@
       leoLeftItem: undefined,
       leoRightItem: undefined,
       hasHTML: false,
-      isFullScreen : false
+      isFullScreen: false
 
     };
 
-    
+
     // //temp hack to know if full screen, reset call bug issue
     // if( $('.topBar-cosmatengine').is(":visible")){
     //   widget.isFullScreen = true;
@@ -86,7 +86,7 @@
           }
           $container1.append(data.leftSideData.htmlData);
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
-          
+
           //if is 
           resizeGridContainers(widget.isFullScreen, $container1);
         } else {
@@ -264,10 +264,10 @@
           //   height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
           //   $(container).css("height", height + "px");
           // }
-          
+
 
           // reexpand the expanding container
-          if (widget.expandContainer != undefined && widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0 ) {
+          if (widget.expandContainer != undefined && widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
             let height = widget.expandLeoItem.getRequiredDimension().height;
             height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
             $(widget.expandContainer).css("height", height + "px");
@@ -287,7 +287,7 @@
         let ht1 = $('.k-spreadsheet-view-size', $('#container2', $container)).outerWidth(true);
         if (ht1 != undefined) {
           //since it has padding present extra 20 px required
-          $('#container2', $container).css('max-width', ht1 + 50 + "px");
+          $('#container2', $container).css('max-width', ht1 + 40 + "px");
         }
         if (isFullScreen) {
           //set height of container1 and container2 based on the height of bottom bar and top nav bar
@@ -296,57 +296,50 @@
           let sum = bottomBarHt + topBarHt + 10;   //10px buffer
           let height = window.parent.innerHeight - sum;
 
-
-
           let gridHeight = -1;
- // check container height should not be greater than the grid hieght 
- if (widget.leoLeftItem && Object.keys(widget.leoLeftItem).length !== 0) {
-  gridHeight = widget.leoLeftItem.getRequiredDimension().height;
-}
+          // check container height should not be greater than the grid hieght 
+          if (widget.leoLeftItem && Object.keys(widget.leoLeftItem).length !== 0) {
+            gridHeight = widget.leoLeftItem.getRequiredDimension().height;
+          }
           // 8px buffer
-        let setheight = gridHeight + parseInt($('#container1').find('.l-act-player').css('margin-bottom')) + 8 +
-        parseInt($('#container1').css("padding-top")) + parseInt($('#container1').css("padding-bottom"));
+          let setheight = gridHeight + parseInt($('#container1').find('.l-act-player').css('margin-bottom')) + 8 +
+            parseInt($('#container1').css("padding-top")) + parseInt($('#container1').css("padding-bottom"));
 
-      if (gridHeight !== -1 && setheight < height) {
-        debugger;
-        // let setheight = $(scrollContainer).find('.l-act-player').outerHeight(true) +
-        // parseInt($(scrollContainer).css("padding-top")) + parseInt($(scrollContainer).css("padding-bottom"));
-        // grid is smaller than viewport height, dont set absolute height
-        $('#container1').css("height", setheight + "px");
-      } else {
-        $('#container1').css("height", height + "px");
-      }
+          if (gridHeight !== -1 && setheight < height) {
+            // grid is smaller than viewport height, dont set absolute height
+            $('#container1').css("height", setheight + "px");
+          } else {
+            $('#container1').css("height", height + "px");
+          }
 
-
-
-       gridHeight = -1;
- // check container height should not be greater than the grid hieght 
- if (widget.leoRightItem && Object.keys(widget.leoRightItem).length !== 0) {
-  gridHeight = widget.leoRightItem.getRequiredDimension().height;
-}
+          gridHeight = -1;
+          // check container height should not be greater than the grid hieght 
+          if (widget.leoRightItem && Object.keys(widget.leoRightItem).length !== 0) {
+            gridHeight = widget.leoRightItem.getRequiredDimension().height;
+          }
           // 8px buffer
-         setheight = gridHeight + parseInt($('#container2').find('.l-act-player').css('margin-bottom')) + 8 +
-        parseInt($('#container2').css("padding-top")) + parseInt($('#container2').css("padding-bottom"));
+          setheight = gridHeight + parseInt($('#container2').find('.l-act-player').css('margin-bottom')) + 8 +
+            parseInt($('#container2').css("padding-top")) + parseInt($('#container2').css("padding-bottom"));
 
-      if (gridHeight !== -1 && setheight < height) {
-        debugger;
-        // grid is smaller than viewport height, dont set absolute height
-        $('#container2').css("height", setheight + "px");
-      } else {
-        $('#container2').css("height", height + "px");
-      }
-
-
-
-          // $('#container1', $container).css("height", height + "px");
-          // $('#container2', $container).css("height", height + "px");
-
+          if (gridHeight !== -1 && setheight < height) {
+            // grid is smaller than viewport height, dont set absolute height
+            $('#container2').css("height", setheight + "px");
+          } else {
+            $('#container2').css("height", height + "px");
+          }
 
           $('#placeholder').css('margin', '0');
           $('#placeholder').removeClass('ribbon-adjustments');
         } else {
 
           if (widget.hasHTML) {
+
+            let wd = $('.k-spreadsheet-view-size', $('#container2', $container)).outerWidth(true);
+            if (wd != undefined) {
+              //since it has padding present extra 20 px required
+              $('#container2', $container).css('min-width', wd + 30 + "px");
+            }
+
             // left container
             if (widget.options.view.sidebyside.leftSideData.height == "scroll") {
               setScrollContainerMS(scrollContainer);
@@ -368,9 +361,7 @@
 
           setScrollContainerMS(scrollContainer);
           setExpandContainerMS();
-
         }
-
       } catch (error) {
         console.log(error);
       }

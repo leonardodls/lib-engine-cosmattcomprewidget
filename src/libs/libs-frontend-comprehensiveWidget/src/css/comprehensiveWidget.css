@@ -9,10 +9,11 @@
     /* flex: 0 1 auto; */
     flex: 1 1 auto;
     min-height: 200px;
-    min-width: 400px;
+    min-width: 350px;
     overflow: auto;
     padding: 10px;
     background: aliceblue;
+    margin-bottom: -11px
 }
 
 .acc-comprehensive-container .right-container {
