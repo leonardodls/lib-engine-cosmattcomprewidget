@@ -77,7 +77,8 @@
 
         if (data.leftSideData.type == "html") {
           widget.hasHTML = true;
-          $($container1).css("position", "sticky");
+          $container1.css("position", "sticky");
+          $container1.css("margin-bottom", "0px");
           // $($container1).css("overflow", "auto");
           if (data.leftSideData.height == "scroll") {
             widget.scrollingContainer = $container1[0];
@@ -258,14 +259,6 @@
         if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0) {
           //abs
         } else {
-          // let container = publishIdAndContainer.get(widget.leoRightItem.props.uid)
-          // if (container != undefined) {
-          //   let height = widget.leoRightItem.getRequiredDimension().height;
-          //   height += 17 + parseInt($(container).css("padding-top")) + parseInt($(container).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
-          //   $(container).css("height", height + "px");
-          // }
-
-
           // reexpand the expanding container
           if (widget.expandContainer != undefined && widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
             let height = widget.expandLeoItem.getRequiredDimension().height;
@@ -309,7 +302,13 @@
             // grid is smaller than viewport height, dont set absolute height
             $('#container1').css("height", setheight + "px");
           } else {
-            $('#container1').css("height", height + "px");
+
+            if (!widget.hasHTML) {
+              //adding extra 11 px to align bottom
+              $('#container1').css("height", height + 11 + "px");
+            } else {
+              $('#container1').css("height", height + "px");
+            }
           }
 
           gridHeight = -1;
@@ -387,9 +386,14 @@
         // 8px buffer
         let setheight = gridHeight + parseInt($(scrollContainer).find('.l-act-player').css('margin-bottom')) + 8 +
           parseInt($(scrollContainer).css("padding-top")) + parseInt($(scrollContainer).css("padding-bottom"));
+        if (gridHeight == -1 && widget.hasHTML) {
+
+          gridHeight = 2;
+          // 20 px padding + 22 px buffer
+          setheight = parseInt($(scrollContainer).find('.html-viewer').css("height")) + 42;
+        }
 
         if (gridHeight !== -1 && setheight < height) {
-          debugger;
           // let setheight = $(scrollContainer).find('.l-act-player').outerHeight(true) +
           // parseInt($(scrollContainer).css("padding-top")) + parseInt($(scrollContainer).css("padding-bottom"));
           // grid is smaller than viewport height, dont set absolute height
@@ -425,13 +429,14 @@
         // 17 px for scroll bar and 10 px padding bottom
         let distFromTop = iframeTop + iframeHeight - scrollingContainerHeight - bottomBarHeight - 17;
         if (window.parent.pageYOffset >= distFromTop) {
-          //set some top
+          //top set when end of page reached
           $(scrollingContainer).animate({
             top: distFromTop + "px"
           }, 0, 'linear');
         } else {
+          // top that is set when sticky , 10px extra space from top
           $(scrollingContainer).animate({
-            top: window.parent.pageYOffset - iframeTop + navBarHt + 0 + "px"
+            top: window.parent.pageYOffset - iframeTop + navBarHt + 10 + "px"
           }, 0, 'linear');
         }
 
