@@ -204,17 +204,11 @@ define([
         var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
         $rightContainer.append(submitButton);
 
-
-
         var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
         $leftContainer.append(checkMyWork);
 
-
-
         var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
         $leftContainer.append(resetButton);
-
-
 
         var fullscreen = $('<button class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
         $leftContainer.append(fullscreen);
@@ -222,20 +216,13 @@ define([
         var minScreen = $('<button class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
         $leftContainer.append(minScreen);
 
-
-        // $toolbarContainer.append($('<div class="fill-space"></div>'));
-
-
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
-
-        //iframeArea.find('html').css('overflow','hidden');
         $questionContainer.find(".fullscreen").bind("click", (function () {
+          __isFullScreen = true;
           //show back button
           $backBtn.show();
-
           $pluginArea.trigger("fullScreenEvent", ["bim", "baz"]);
-
 
           //hide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
@@ -245,7 +232,7 @@ define([
                 return this;
               }
             }
-          }).toggle();
+          }).hide();
 
           iframeArea.css({
             'width': '100vw',
@@ -258,26 +245,32 @@ define([
           });
 
           $(this).hide();
-
-          $topBar.toggle();  //display top bar
+          $topBar.show();  //display top bar
           $questionContainer.find(".minScreen").show();
 
-          __isFullScreen = true;
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "hidden");
+
+          //add to history to disable back button and override onpopstate
+          history.pushState(null, null, location.href);
+          window.onpopstate = function () {
+            history.go(1);
+          };
+
         }));
 
         $backBtn.bind("click", (function () {
-          //hide self
-
           $(minScreen).trigger("click");
-
         }));
 
-
         $questionContainer.find(".minScreen").bind("click", (function () {
-
           __isFullScreen = false;
+
+          //remove extra history item that was pushed and reset the onpopstate funtion 
+          history.back();
+          window.onpopstate = function () {
+          };
+
           $backBtn.hide();
           // unhide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
@@ -287,8 +280,7 @@ define([
                 return this;
               }
             }
-          }).toggle();
-          // $container.append(widgetContainer);
+          }).show();
 
           iframeArea.css({
             'width': '100%',
@@ -301,86 +293,66 @@ define([
 
           });
 
-          //todo bottom bar properties to be changed
-
           $(this).hide();
-
-          $topBar.toggle();  //hide top bar
+          $topBar.hide();  //hide top bar
           $questionContainer.find(".fullscreen").show();
 
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
           $pluginArea.trigger("minScreenEvent", ["bim", "baz"]);
-
         }));
 
         $questionContainer.find(".checkMyWork").bind("click", (function () {
-
-
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
-
           if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
             $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          }
-          else {
+          } else {
             $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
           }
         }));
 
         $questionContainer.find(".resetButton").bind("click", (function () {
-          try{
-            __resetAnswers() ;
-          // window.top.assessment_compre.component.reset();
-          }catch(e){
+          try {
+            __resetAnswers();
+            // window.top.assessment_compre.component.reset();
+          } catch (e) {
             console.log(e);
           }
 
         }));
         $questionContainer.find(".submitButton").bind("click", (function () {
           // window.top.assessment_compre.component.submitTestBtnClicked();
-
         }));
 
-
         $(elRoot).html($questionContainer);
-
 
         /* Inform the shell that init is complete */
         if (callback) {
           callback();
         }
 
-
         //pluginArea Resize event binding
         $pluginArea.on("widgetResized", function (event, args) {
-
-          try{
-
-          if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
-            __config.RESIZE_MODE = "auto";
-            activityAdaptor.autoResizeActivityIframe();
-          } else {
-            __config.RESIZE_MODE = "manual";
-            __config.RESIZE_HEIGHT = window.parent.innerHeight;
+          try {
+            if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
+              __config.RESIZE_MODE = "auto";
+              activityAdaptor.autoResizeActivityIframe();
+            } else {
+              __config.RESIZE_MODE = "manual";
+              __config.RESIZE_HEIGHT = window.parent.innerHeight;
+            }
+          } catch (e) {
+            console.log(e);
           }
 
-        }catch(e){
-          console.log(e);
-        }
-
         });
-
 
         $pluginArea.on("gridChanged", function (event, range, data, args) {
           saveCurrentState();
-
         });
-
 
         // initial UI setup
         $topBar.hide();
-
-
       }
       /* ---------------------- END OF INIT ---------------------------------*/
 
