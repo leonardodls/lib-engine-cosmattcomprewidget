@@ -391,11 +391,11 @@ define('css!../css/cosmattcomprewidget',[],function(){});
             if (widget.hasHTML) {
               //only right is present
               resizeGridContainers(false, widget.scrollingContainer);
-              // $container.trigger("pluginReady", [args]);
+              // $container.trigger("pluginReady");
             } else if (Object.keys(widget.expandLeoItem).length !== 0 &&
               Object.keys(widget.scrollingLeoItem).length !== 0) {
               resizeGridContainers(false, widget.scrollingContainer);
-              // $container.trigger("pluginReady", [args]);
+              // $container.trigger("pluginReady");
             }
 
 
@@ -882,8 +882,8 @@ define('cosmattcomprewidget',[
         var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
         $rightContainer.append(submitButton);
 
-        var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
-        $leftContainer.append(checkMyWork);
+        // var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
+        // $leftContainer.append(checkMyWork);
 
         var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
         $leftContainer.append(resetButton);
@@ -988,14 +988,14 @@ define('cosmattcomprewidget',[
 
         }));
 
-        $questionContainer.find(".checkMyWork").bind("click", (function () {
-          window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-            $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          } else {
-            $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          }
-        }));
+        // $questionContainer.find(".checkMyWork").bind("click", (function () {
+        //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
+        //   if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
+        //     $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+        //   } else {
+        //     $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+        //   }
+        // }));
 
         $questionContainer.find(".resetButton").bind("click", (function () {
           try {
