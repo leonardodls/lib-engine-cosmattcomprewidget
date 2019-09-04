@@ -207,7 +207,6 @@
           ready: function (range, data) {
 
 
-
             if (widget.isFullScreen) {
               resizeGridContainers(true);
               return;
@@ -220,9 +219,11 @@
             if (widget.hasHTML) {
               //only right is present
               resizeGridContainers(false, widget.scrollingContainer);
+              // $container.trigger("pluginReady", [args]);
             } else if (Object.keys(widget.expandLeoItem).length !== 0 &&
               Object.keys(widget.scrollingLeoItem).length !== 0) {
               resizeGridContainers(false, widget.scrollingContainer);
+              // $container.trigger("pluginReady", [args]);
             }
 
 

@@ -267,7 +267,7 @@ define([
           $(minScreen).trigger("click");
         }));
 
-       
+
 
         $questionContainer.find(".minScreen").bind("click", (function () {
           __isFullScreen = false;
@@ -359,6 +359,8 @@ define([
           saveCurrentState();
         });
 
+       
+
         let GoInFullscreen = function (element) {
           if (element.requestFullscreen) {
             element.requestFullscreen();
@@ -395,6 +397,15 @@ define([
 
         // initial UI setup
         $topBar.hide();
+        // let loaderContainer = $('body').children().filter('.loader-container');
+         
+        // loaderContainer.show();
+        // loaderContainer.css('opacity', '1');
+
+        // $pluginArea.on("pluginReady", function (event, range, data, args) {
+        //   loaderContainer.hide();
+        //   loaderContainer.css('opacity', '0.7');
+        // });
       }
       /* ---------------------- END OF INIT ---------------------------------*/
 
