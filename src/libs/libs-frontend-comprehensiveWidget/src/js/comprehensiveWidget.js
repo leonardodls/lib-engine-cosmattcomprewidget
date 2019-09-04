@@ -1,7 +1,6 @@
 'use strict';
 (function ($) {
   $.fn.comprehensiveWidget = function (id, options) {
-    debugger;
 
     $(this).empty();
     let widget = {
@@ -79,6 +78,12 @@
           widget.hasHTML = true;
           $container1.css("position", "sticky");
           $container1.css("margin-bottom", "0px");
+          $container1.css("border", "1px solid #cae8ff");
+          $container1.css("max-width", "350px");
+
+
+          $container2.css("min-width", "350px");
+
           // $($container1).css("overflow", "auto");
           if (data.leftSideData.height == "scroll") {
             widget.scrollingContainer = $container1[0];
@@ -86,6 +91,8 @@
             widget.expandContainer = $container1[0];
           }
           $container1.append(data.leftSideData.htmlData);
+          $('.html-viewer', $container1).css('font-family', 'Calibri');
+          $('.html-viewer', $container1).css('font-size', '12pt');
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
 
           //if is 
@@ -255,6 +262,7 @@
         widget.isFullScreen = false;
         //scrolling container position gets changed as by default window is scrolled , so scrolling back to top
         $(window.parent).scrollTop(0);
+        $(widget.scrollingContainer).css("top", "0px");
 
         if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0) {
           //abs
@@ -334,17 +342,19 @@
           if (widget.hasHTML) {
 
             let wd = $('.k-spreadsheet-view-size', $('#container2', $container)).outerWidth(true);
-            if (wd != undefined) {
-              //since it has padding present extra 20 px required
-              $('#container2', $container).css('min-width', wd + 30 + "px");
-            }
+
+
+            let availableWd = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+            let leftContainer;
 
             // left container
             if (widget.options.view.sidebyside.leftSideData.height == "scroll") {
               setScrollContainerMS(scrollContainer);
+              leftContainer = widget.scrollContainer;
             } else {
               let ht = $(widget.expandContainer).find('.html-viewer').outerHeight(true);
               $(widget.expandContainer).css("height", ht + "px");
+              leftContainer = widget.expandContainer;
             }
 
             // right item will be there
@@ -355,6 +365,22 @@
             } else {
               setExpandContainerMS();
             }
+
+            if ((parseInt($(widget.scrollingContainer).css('min-width')) + wd + 30) < availableWd - 25) {
+              if (wd != undefined) {
+                //since it has padding present extra 20 px required
+                $('#container2', $container).css('min-width', wd + 30 + "px");
+                $container1.css("max-width", "790px");
+              }
+            } else {
+              $container1.css("max-width", "350px");
+              $container2.css("min-width", "350px");
+            }
+
+
+
+
+
             return;
           }
 

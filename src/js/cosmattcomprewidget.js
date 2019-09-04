@@ -251,11 +251,15 @@ define([
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "hidden");
 
-          //add to history to disable back button and override onpopstate
-          history.pushState(null, null, location.href);
-          window.onpopstate = function () {
-            history.go(1);
-          };
+          // //add to history to disable back button and override onpopstate
+          // history.pushState(null, null, location.href);
+          // window.onpopstate = function () {
+          //   history.go(1);
+          // };
+
+
+          GoInFullscreen(document.documentElement);
+
 
         }));
 
@@ -263,13 +267,15 @@ define([
           $(minScreen).trigger("click");
         }));
 
+       
+
         $questionContainer.find(".minScreen").bind("click", (function () {
           __isFullScreen = false;
 
-          //remove extra history item that was pushed and reset the onpopstate funtion 
-          history.back();
-          window.onpopstate = function () {
-          };
+          // //remove extra history item that was pushed and reset the onpopstate funtion 
+          // history.back();
+          // window.onpopstate = function () {
+          // };
 
           $backBtn.hide();
           // unhide the footer and top navbar dom elements
@@ -300,6 +306,8 @@ define([
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
           $pluginArea.trigger("minScreenEvent", ["bim", "baz"]);
+          GoOutFullscreen();
+
         }));
 
         $questionContainer.find(".checkMyWork").bind("click", (function () {
@@ -349,6 +357,40 @@ define([
 
         $pluginArea.on("gridChanged", function (event, range, data, args) {
           saveCurrentState();
+        });
+
+        let GoInFullscreen = function (element) {
+          if (element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+        }
+        let GoOutFullscreen = function () {
+          if (document.exitFullscreen)
+            document.exitFullscreen();
+          else if (document.mozCancelFullScreen)
+            document.mozCancelFullScreen();
+          else if (document.webkitExitFullscreen)
+            document.webkitExitFullscreen();
+          else if (document.msExitFullscreen)
+            document.msExitFullscreen();
+        }
+
+
+
+        let fullScrToggle = false;
+        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
+          if (fullScrToggle) {
+            $(minScreen).trigger("click");
+            fullScrToggle = false;
+          } else {
+            fullScrToggle = true;
+          }
         });
 
         // initial UI setup

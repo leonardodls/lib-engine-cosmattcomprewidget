@@ -14,6 +14,7 @@
     padding: 10px;
     background: aliceblue;
     margin-bottom: -11px ;
+    border-top-left-radius: 4px;
 }
 
 .acc-comprehensive-container .right-container {
@@ -26,6 +27,7 @@
     margin-left: 10px;
     box-shadow: 5px 5px 10px 0px #eaeaea;
     border : 1px solid #dddddd;
+    border-top-right-radius: 4px;
 }
 
 .acc-comprehensive-container .splitter {
