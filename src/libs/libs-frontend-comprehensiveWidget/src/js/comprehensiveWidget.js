@@ -219,11 +219,11 @@
             if (widget.hasHTML) {
               //only right is present
               resizeGridContainers(false, widget.scrollingContainer);
-              // $container.trigger("pluginReady");
+              $container.trigger("pluginReady");
             } else if (Object.keys(widget.expandLeoItem).length !== 0 &&
               Object.keys(widget.scrollingLeoItem).length !== 0) {
               resizeGridContainers(false, widget.scrollingContainer);
-              // $container.trigger("pluginReady");
+              $container.trigger("pluginReady");
             }
 
 

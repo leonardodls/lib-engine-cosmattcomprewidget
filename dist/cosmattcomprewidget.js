@@ -391,11 +391,11 @@ define('css!../css/cosmattcomprewidget',[],function(){});
             if (widget.hasHTML) {
               //only right is present
               resizeGridContainers(false, widget.scrollingContainer);
-              // $container.trigger("pluginReady");
+              $container.trigger("pluginReady");
             } else if (Object.keys(widget.expandLeoItem).length !== 0 &&
               Object.keys(widget.scrollingLeoItem).length !== 0) {
               resizeGridContainers(false, widget.scrollingContainer);
-              // $container.trigger("pluginReady");
+              $container.trigger("pluginReady");
             }
 
 
@@ -935,16 +935,13 @@ define('cosmattcomprewidget',[
           //   history.go(1);
           // };
 
-
           GoInFullscreen(document.documentElement);
-
 
         }));
 
         $backBtn.bind("click", (function () {
           $(minScreen).trigger("click");
         }));
-
 
 
         $questionContainer.find(".minScreen").bind("click", (function () {
@@ -1010,13 +1007,6 @@ define('cosmattcomprewidget',[
           // window.top.assessment_compre.component.submitTestBtnClicked();
         }));
 
-        $(elRoot).html($questionContainer);
-
-        /* Inform the shell that init is complete */
-        if (callback) {
-          callback();
-        }
-
         //pluginArea Resize event binding
         $pluginArea.on("widgetResized", function (event, args) {
           try {
@@ -1036,8 +1026,6 @@ define('cosmattcomprewidget',[
         $pluginArea.on("gridChanged", function (event, range, data, args) {
           saveCurrentState();
         });
-
-       
 
         let GoInFullscreen = function (element) {
           if (element.requestFullscreen) {
@@ -1061,8 +1049,6 @@ define('cosmattcomprewidget',[
             document.msExitFullscreen();
         }
 
-
-
         let fullScrToggle = false;
         $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
           if (fullScrToggle) {
@@ -1073,17 +1059,23 @@ define('cosmattcomprewidget',[
           }
         });
 
+        $pluginArea.on("pluginReady", function (event, args) {
+          setTimeout(function () {
+            /* Inform the shell that init is complete */
+            if (callback) {
+              callback();
+            }
+          }, 200);
+
+        });
+
         // initial UI setup
         $topBar.hide();
-        // let loaderContainer = $('body').children().filter('.loader-container');
-         
-        // loaderContainer.show();
-        // loaderContainer.css('opacity', '1');
 
-        // $pluginArea.on("pluginReady", function (event, range, data, args) {
-        //   loaderContainer.hide();
-        //   loaderContainer.css('opacity', '0.7');
-        // });
+
+
+        $(elRoot).html($questionContainer);
+
       }
       /* ---------------------- END OF INIT ---------------------------------*/
 
