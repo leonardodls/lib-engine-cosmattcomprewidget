@@ -220,7 +220,8 @@ define([
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
-        if (window.top.assessment_compre.component.savedResponses[0].data.submitted == false) {
+        let savedResponses = window.top.assessment_compre.component.savedResponses[0];
+        if (savedResponses && savedResponses.data && savedResponses.data.submitted &&savedResponses.data.submitted == false) {
           $questionContainer.find('.submitButton').html('Submit');
         } else {
           $questionContainer.find('.submitButton').html('Try Again');
