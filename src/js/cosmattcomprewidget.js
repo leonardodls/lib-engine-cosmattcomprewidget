@@ -218,6 +218,12 @@ define([
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
+        if(window.top.assessment_compre.component.savedResponses[0].data.submitted == false){
+                  $questionContainer.find('.submitButton').html('Submit');
+        }else{
+            $questionContainer.find('.submitButton').html('Try Again');
+        }
+
         $questionContainer.find(".fullscreen").bind("click", (function () {
           __isFullScreen = true;
           //show back button
