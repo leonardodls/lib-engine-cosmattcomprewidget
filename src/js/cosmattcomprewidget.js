@@ -157,7 +157,9 @@ define([
         /* ------ VALIDATION BLOCK END -------- */
         var $questionContainer = $('<div class="cosmattcomprewidget-engine"></div>');
         var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="question-container"></div></nav>');
-        $questionContainer.append('<button class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+
+        var $topFullScrnBtn = $('<button title="This expands the exercise worksheet to a full screen, in order to enter the data easily" class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+        $questionContainer.append($topFullScrnBtn);
 
         var $questionArea = $('<div class="question-text"></div>');
         $topBar.find('.question-container').append($questionArea);
@@ -210,18 +212,18 @@ define([
         var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
         $leftContainer.append(resetButton);
 
-        var fullscreen = $('<button class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+        var fullscreen = $('<button title="This expands the exercise worksheet to a full screen, in order to enter the data easily" class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
         $leftContainer.append(fullscreen);
 
-        var minScreen = $('<button class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
+        var minScreen = $('<button title="This minimizes the full screen to the original format" class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
         $leftContainer.append(minScreen);
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
-        if(window.top.assessment_compre.component.savedResponses[0].data.submitted == false){
-                  $questionContainer.find('.submitButton').html('Submit');
-        }else{
-            $questionContainer.find('.submitButton').html('Try Again');
+        if (window.top.assessment_compre.component.savedResponses[0].data.submitted == false) {
+          $questionContainer.find('.submitButton').html('Submit');
+        } else {
+          $questionContainer.find('.submitButton').html('Try Again');
         }
 
         $questionContainer.find(".fullscreen, .topfullscreen").bind("click", (function () {
@@ -250,7 +252,8 @@ define([
             'left': 0
           });
 
-          $(this).hide();
+          fullscreen.hide();
+          $topFullScrnBtn.hide();
           $topBar.show();  //display top bar
           $questionContainer.find(".minScreen").show();
 
@@ -303,10 +306,10 @@ define([
           });
 
           $(this).hide();
-          $topBar.hide();  //hide top bar
-          $questionContainer.find(".fullscreen").show();
-          $questionContainer.find(".topfullscreen").show();
           
+          $topBar.hide();  //hide top bar
+          fullscreen.show();
+          $topFullScrnBtn.show();
 
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
@@ -341,7 +344,7 @@ define([
           } else {
             $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
           }
-          
+
         }));
 
         //pluginArea Resize event binding
@@ -365,25 +368,36 @@ define([
         });
 
         let GoInFullscreen = function (element) {
-          if (element.requestFullscreen) {
-            element.requestFullscreen();
-          } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-          } else if (element.webkitRequestFullscreen) {
-            element.webkitRequestFullscreen();
-          } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
+          try {
+            if (element.requestFullscreen) {
+              element.requestFullscreen();
+            } else if (element.mozRequestFullScreen) {
+              element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullscreen) {
+              element.webkitRequestFullscreen();
+            } else if (element.msRequestFullscreen) {
+              element.msRequestFullscreen();
+            }
+
+          } catch (e) {
+            console.log(e);
           }
         }
         let GoOutFullscreen = function () {
-          if (document.exitFullscreen)
-            document.exitFullscreen();
-          else if (document.mozCancelFullScreen)
-            document.mozCancelFullScreen();
-          else if (document.webkitExitFullscreen)
-            document.webkitExitFullscreen();
-          else if (document.msExitFullscreen)
-            document.msExitFullscreen();
+          try {
+            if (document.exitFullscreen) {
+              document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+              document.mozCancelFullScreen();
+            } else if (document.webkitExitFullscreen) {
+              document.webkitExitFullscreen();
+            } else if (document.msExitFullscreen) {
+              document.msExitFullscreen();
+            }
+          } catch (e) {
+            console.log(e);
+          }
+
         }
 
         let fullScrToggle = false;
