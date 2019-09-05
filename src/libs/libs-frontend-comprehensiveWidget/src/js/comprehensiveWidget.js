@@ -296,7 +296,7 @@
           let bottomBarHt = $('.bottomBar-cosmatengine').outerHeight(true);
           let topBarHt = $('.topBar-cosmatengine').outerHeight(true);
           let sum = bottomBarHt + topBarHt + 10;   //10px buffer
-          let height = window.parent.innerHeight - sum;
+          let height = window.parent.innerHeight - sum -25;
 
           let gridHeight = -1;
           // check container height should not be greater than the grid hieght 
