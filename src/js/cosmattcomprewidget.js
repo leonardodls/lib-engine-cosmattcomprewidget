@@ -327,6 +327,13 @@ define([
         }));
         $questionContainer.find(".submitButton").bind("click", (function () {
           // window.top.assessment_compre.component.submitTestBtnClicked();
+          window.top.assessment_compre.component.checkMyWorkBtnClicked();
+          if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
+            $(this).html('Submit');
+          } else {
+            $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+          }
+          
         }));
 
         //pluginArea Resize event binding
