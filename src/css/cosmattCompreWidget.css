@@ -66,6 +66,7 @@
 
 .pluginArea {
     padding-bottom: 82px;
+    margin-top: 25px;
 }
 
 .link-btn {
@@ -203,4 +204,14 @@
     margin-top: -11px;
     margin-left: -11px;
     margin-right: -10px;
+}
+.topfullscreen{
+    position:absolute !important;
+    right:0;
+    top:-12px;
+}
+.topfullscreen::active{
+     position:absolute !important;
+     right:0;
+     top:-12px;
 }

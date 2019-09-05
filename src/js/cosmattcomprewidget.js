@@ -157,7 +157,7 @@ define([
         /* ------ VALIDATION BLOCK END -------- */
         var $questionContainer = $('<div class="cosmattcomprewidget-engine"></div>');
         var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="question-container"></div></nav>');
-
+        $questionContainer.append('<button class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
 
         var $questionArea = $('<div class="question-text"></div>');
         $topBar.find('.question-container').append($questionArea);
@@ -224,7 +224,7 @@ define([
             $questionContainer.find('.submitButton').html('Try Again');
         }
 
-        $questionContainer.find(".fullscreen").bind("click", (function () {
+        $questionContainer.find(".fullscreen, .topfullscreen").bind("click", (function () {
           __isFullScreen = true;
           //show back button
           $backBtn.show();
@@ -305,6 +305,8 @@ define([
           $(this).hide();
           $topBar.hide();  //hide top bar
           $questionContainer.find(".fullscreen").show();
+          $questionContainer.find(".topfullscreen").show();
+          
 
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
