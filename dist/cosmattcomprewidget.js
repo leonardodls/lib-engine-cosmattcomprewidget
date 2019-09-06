@@ -898,10 +898,11 @@ define('cosmattcomprewidget',[
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
-
         $questionContainer.find('.submitButton').html('Submit');
         let savedResponses = window.top.assessment_compre.component.savedResponses[0];
-        if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
+        if(savedResponses==undefined){
+          // do nothing
+        }else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
           $questionContainer.find('.submitButton').html('Submit');
           // resetButton.prop("disabled", false);
         } else {
