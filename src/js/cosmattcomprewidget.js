@@ -220,13 +220,17 @@ define([
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
+
+        $questionContainer.find('.submitButton').html('Submit');
         let savedResponses = window.top.assessment_compre.component.savedResponses[0];
-        if (savedResponses && savedResponses.data && savedResponses.data.submitted &&savedResponses.data.submitted == false) {
+        if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
           $questionContainer.find('.submitButton').html('Submit');
-          resetButton.prop("disabled", false);
+          // resetButton.prop("disabled", false);
         } else {
-          $questionContainer.find('.submitButton').html('Try Again');
-          resetButton.prop("disabled", true);
+          // $questionContainer.find('.submitButton').html('Try Again');
+          // resetButton.prop("disabled", true);
+          $questionContainer.find('.submitButton').html('Submit');
+          submitButton.prop("disabled", true);
         }
 
         $questionContainer.find(".fullscreen, .topfullscreen").bind("click", (function () {
@@ -332,23 +336,32 @@ define([
 
         $questionContainer.find(".resetButton").bind("click", (function () {
           try {
+            if(submitButton.prop("disabled") == true){
+              window.top.assessment_compre.component.checkMyWorkBtnClicked();
+            submitButton.prop("disabled", false);
+            }
+
             __resetAnswers();
+            
             // window.top.assessment_compre.component.reset();
           } catch (e) {
             console.log(e);
           }
 
         }));
+
         $questionContainer.find(".submitButton").bind("click", (function () {
           // window.top.assessment_compre.component.submitTestBtnClicked();
+          
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-            $(this).html('Submit');
-            resetButton.prop("disabled", false);
-          } else {
-            $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-            resetButton.prop("disabled", true);
-          }
+          submitButton.prop("disabled", true);
+          // if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
+          //   $(this).html('Submit');
+          //   // resetButton.prop("disabled", false);
+          // } else {
+          //   $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+          //   // resetButton.prop("disabled", true);
+          // }
 
         }));
 
