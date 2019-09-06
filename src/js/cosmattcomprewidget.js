@@ -223,8 +223,10 @@ define([
         let savedResponses = window.top.assessment_compre.component.savedResponses[0];
         if (savedResponses && savedResponses.data && savedResponses.data.submitted &&savedResponses.data.submitted == false) {
           $questionContainer.find('.submitButton').html('Submit');
+          resetButton.prop("disabled", false);
         } else {
           $questionContainer.find('.submitButton').html('Try Again');
+          resetButton.prop("disabled", true);
         }
 
         $questionContainer.find(".fullscreen, .topfullscreen").bind("click", (function () {
@@ -342,8 +344,10 @@ define([
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
           if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
             $(this).html('Submit');
+            resetButton.prop("disabled", false);
           } else {
             $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+            resetButton.prop("disabled", true);
           }
 
         }));
