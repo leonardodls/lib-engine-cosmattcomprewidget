@@ -296,7 +296,7 @@
           let bottomBarHt = $('.bottomBar-cosmatengine').outerHeight(true);
           let topBarHt = $('.topBar-cosmatengine').outerHeight(true);
           let sum = bottomBarHt + topBarHt + 10;   //10px buffer
-          let height = window.parent.innerHeight - sum -25;
+          let height = window.parent.innerHeight - sum - 25;
 
           let gridHeight = -1;
           // check container height should not be greater than the grid hieght 
@@ -411,7 +411,7 @@
         }
 
         // 8px buffer
-        let setheight = gridHeight + parseInt($(scrollContainer).find('.l-act-player').css('margin-bottom')) + 8 +
+        let setheight = gridHeight + parseInt($(scrollContainer).find('.l-act-player').css('margin-bottom')) + 16 +
           parseInt($(scrollContainer).css("padding-top")) + parseInt($(scrollContainer).css("padding-bottom"));
         if (gridHeight == -1 && widget.hasHTML) {
 
