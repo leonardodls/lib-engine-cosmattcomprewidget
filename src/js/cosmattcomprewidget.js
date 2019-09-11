@@ -31,11 +31,9 @@
 // 8:23 22/06/2017
 
 define([
-  'css!../../node_modules/font-awesome/css/font-awesome.min.css',
   'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
   'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
   'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
-  //sdk.leonardodls.com/leonardo-items.js
   'http://sdk.leonardodls.com/leonardo-items.js',
   '../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js'
 ], //Required by Rivets
@@ -158,7 +156,7 @@ define([
         var $questionContainer = $('<div class="cosmattcomprewidget-engine"></div>');
         var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="question-container"></div></nav>');
 
-        var $topFullScrnBtn = $('<button title="This expands the exercise worksheet to a full screen, in order to enter the data easily" class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+        var $topFullScrnBtn = $('<button title="Expand the Exercise to Full Screen" class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
         $questionContainer.append($topFullScrnBtn);
 
         var $questionArea = $('<div class="question-text"></div>');
@@ -170,7 +168,7 @@ define([
         var $questionInstruction = $('<div class="questionInstruction"></div>');
         $questionArea.append($questionInstruction);
 
-        var $backBtn = $('<div class="backbtn"><i class="fa fa-times"></i></div>');
+        var $backBtn = $('<div class="backbtn" title="Exit Full Screen"><i class="fa fa-times"></i></div>');
         $topBar.find('.question-container').append($backBtn);
 
         var $pluginArea = $('<div class="pluginArea"></div>');
@@ -212,10 +210,10 @@ define([
         var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
         $leftContainer.append(resetButton);
 
-        var fullscreen = $('<button title="This expands the exercise worksheet to a full screen, in order to enter the data easily" class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+        var fullscreen = $('<button title="Expand the Exercise to Full Screen" class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
         $leftContainer.append(fullscreen);
 
-        var minScreen = $('<button title="This minimizes the full screen to the original format" class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
+        var minScreen = $('<button title="Exit Full Screen" class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
         $leftContainer.append(minScreen);
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
