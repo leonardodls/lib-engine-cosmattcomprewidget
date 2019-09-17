@@ -18,5 +18,8 @@
     "grunt-exec": "^3.0.0",
     "grunt-text-replace": "0.4.0",
     "serve": "^11.1.0"
+  },
+  "scripts": {
+    "start": "grunt"
   }
 }
