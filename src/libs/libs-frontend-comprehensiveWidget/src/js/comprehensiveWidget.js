@@ -247,7 +247,12 @@
             events: callbacks,
             uiStyle: uiStyle,
             playerButtons: { visible: showPlayerButtons }
-          });
+          },
+          {
+            mode: "production"
+          }
+          
+          );
       }
     };
     let updateInputs = function (params) {
