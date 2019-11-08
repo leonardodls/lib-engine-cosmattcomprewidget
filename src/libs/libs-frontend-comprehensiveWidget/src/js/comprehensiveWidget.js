@@ -262,10 +262,15 @@
     let addListeners = function () {
       $container.on("fullScreenEvent", function (event, args) {
         widget.isFullScreen = true;
+        $('#placeholder').css('margin', '0');
+        $('#placeholder').removeClass('ribbon-adjustments');
         resizeGridContainers(true);
       });
       $container.on("minScreenEvent", function (event, args) {
         widget.isFullScreen = false;
+        $('#placeholder').css('margin', '');
+        $('#placeholder').addClass('ribbon-adjustments');
+
         //scrolling container position gets changed as by default window is scrolled , so scrolling back to top
         $(window.parent).scrollTop(0);
         $(widget.scrollingContainer).css("top", "0px");
@@ -341,8 +346,7 @@
             $('#container2').css("height", height + "px");
           }
 
-          $('#placeholder').css('margin', '0');
-          $('#placeholder').removeClass('ribbon-adjustments');
+         
         } else {
 
           if (widget.hasHTML) {
@@ -501,7 +505,7 @@
       updateInputs: updateInputs,
       markAnswers: markAnswers,
       leoLeftItem: widget.leoLeftItem,
-      leoRightItem: widget.leoRightItem
+      leoRightItem: widget.leoRightItem,
     };
 
 
