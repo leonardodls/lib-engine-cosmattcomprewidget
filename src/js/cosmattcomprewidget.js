@@ -156,8 +156,15 @@ define([
         var $questionContainer = $('<div class="cosmattcomprewidget-engine"></div>');
         var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="question-container"></div></nav>');
 
-        var $topFullScrnBtn = $('<button title="Expand the Exercise to Full Screen" class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
-        $questionContainer.append($topFullScrnBtn);
+
+        // __content.appData.options.data.hideTopToolbar = true;
+        if (__content.appData.options.data.hideTopToolbar != true) {
+          let $topToolbar = $('<div class="topToolbar-cosmatcomprewidget"></div>');
+          $questionContainer.append($topToolbar);
+          var $topFullScrnBtn = $('<button title="Expand the Exercise to Full Screen" class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+          $topToolbar.append($topFullScrnBtn);
+        }
+
 
         var $questionArea = $('<div class="question-text"></div>');
         $topBar.find('.question-container').append($questionArea);
@@ -185,100 +192,104 @@ define([
         $questionContainer.append($pluginArea);
 
 
-        // __content.appData.options.data.hideBottomToolbar = true;
-        if (__content.appData.options.data.hideBottomToolbar !== true) {
-
-          $pluginArea.addClass('bottomBarVisible');
-
-          // $questionContainer.append($separeator);
-          let $bottomBar = $('<div class="bottomBar-cosmatengine"></div>');
-          $questionContainer.append($bottomBar);
-          let $separeator = $('<div class="separator"></div>');
-          $bottomBar.append($separeator);
-
-          let $toolbarContainer = $('<div class="toolbar-container"></div>');
-          $bottomBar.append($toolbarContainer);
-          //$toolbarContainer.append($('<div class="fill-space"></div>'));
-
-          var $rightContainer = $('<div class="rightContainer" ></div>');
-          var $leftContainer = $('<div class="leftContainer" ></div>');
-          $toolbarContainer.append($leftContainer);
-          $toolbarContainer.append($rightContainer);
-          var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
-          $rightContainer.append(submitButton);
-
-          // var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
-          // $leftContainer.append(checkMyWork);
-
-          var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
-          $leftContainer.append(resetButton);
-
-          var fullscreen = $('<button title="Expand the Exercise to Full Screen" class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
-          $leftContainer.append(fullscreen);
-
-          var minScreen = $('<button title="Exit Full Screen" class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
-          $leftContainer.append(minScreen);
 
 
 
+        // $questionContainer.append($separeator);
+        $pluginArea.addClass('bottomBarVisible');
+
+        let $bottomBar = $('<div class="bottomBar-cosmatengine"></div>');
+        $questionContainer.append($bottomBar);
+        let $separeator = $('<div class="separator"></div>');
+        $bottomBar.append($separeator);
+
+        let $toolbarContainer = $('<div class="toolbar-container"></div>');
+        $bottomBar.append($toolbarContainer);
+        //$toolbarContainer.append($('<div class="fill-space"></div>'));
+
+        var $rightContainer = $('<div class="rightContainer" ></div>');
+        var $leftContainer = $('<div class="leftContainer" ></div>');
+        $toolbarContainer.append($leftContainer);
+        $toolbarContainer.append($rightContainer);
+        var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
+        $rightContainer.append(submitButton);
+
+        // var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
+        // $leftContainer.append(checkMyWork);
+
+        var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
+        $leftContainer.append(resetButton);
+
+        var fullscreen = $('<button title="Expand the Exercise to Full Screen" class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+        $leftContainer.append(fullscreen);
+
+        var minScreen = $('<button title="Exit Full Screen" class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
+        $leftContainer.append(minScreen);
+
+
+
+        $questionContainer.find('.submitButton').html('Submit');
+        let savedResponses = window.top.assessment_compre.component.savedResponses[0];
+        if (savedResponses == undefined) {
+          // do nothing
+        } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
           $questionContainer.find('.submitButton').html('Submit');
-          let savedResponses = window.top.assessment_compre.component.savedResponses[0];
-          if (savedResponses == undefined) {
-            // do nothing
-          } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
-            $questionContainer.find('.submitButton').html('Submit');
-            // resetButton.prop("disabled", false);
-          } else {
-            // $questionContainer.find('.submitButton').html('Try Again');
-            // resetButton.prop("disabled", true);
-            $questionContainer.find('.submitButton').html('Submit');
-            submitButton.prop("disabled", true);
-          }
+          // resetButton.prop("disabled", false);
+        } else {
+          // $questionContainer.find('.submitButton').html('Try Again');
+          // resetButton.prop("disabled", true);
+          $questionContainer.find('.submitButton').html('Submit');
+          submitButton.prop("disabled", true);
+        }
 
 
-          // $questionContainer.find(".checkMyWork").bind("click", (function () {
-          //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          //   if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-          //     $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          //   } else {
-          //     $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          //   }
-          // }));
+        // $questionContainer.find(".checkMyWork").bind("click", (function () {
+        //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
+        //   if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
+        //     $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+        //   } else {
+        //     $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+        //   }
+        // }));
 
-          $questionContainer.find(".resetButton").bind("click", (function () {
-            try {
-              if (submitButton.prop("disabled") == true) {
-                window.top.assessment_compre.component.checkMyWorkBtnClicked();
-                submitButton.prop("disabled", false);
-              }
-
-              __resetAnswers();
-
-              // window.top.assessment_compre.component.reset();
-            } catch (e) {
-              console.log(e);
+        $questionContainer.find(".resetButton").bind("click", (function () {
+          try {
+            if (submitButton.prop("disabled") == true) {
+              window.top.assessment_compre.component.checkMyWorkBtnClicked();
+              submitButton.prop("disabled", false);
             }
 
-          }));
+            __resetAnswers();
+
+            // window.top.assessment_compre.component.reset();
+          } catch (e) {
+            console.log(e);
+          }
+
+        }));
 
 
-          $questionContainer.find(".submitButton").bind("click", (function () {
-            debugger;
-            // window.top.assessment_compre.component.submitTestBtnClicked();
+        $questionContainer.find(".submitButton").bind("click", (function () {
+          debugger;
+          // window.top.assessment_compre.component.submitTestBtnClicked();
 
-            window.top.assessment_compre.component.checkMyWorkBtnClicked();
-            saveCurrentState();
-            submitButton.prop("disabled", true);
-            // if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-            //   $(this).html('Submit');
-            //   // resetButton.prop("disabled", false);
-            // } else {
-            //   $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-            //   // resetButton.prop("disabled", true);
-            // }
+          window.top.assessment_compre.component.checkMyWorkBtnClicked();
+          saveCurrentState();
+          submitButton.prop("disabled", true);
+          // if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
+          //   $(this).html('Submit');
+          //   // resetButton.prop("disabled", false);
+          // } else {
+          //   $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
+          //   // resetButton.prop("disabled", true);
+          // }
 
-          }));
+        }));
 
+
+        if (__content.appData.options.data.hideBottomToolbar === true) {
+          $bottomBar.hide();
+          $pluginArea.removeClass('bottomBarVisible');
         }
 
 
@@ -325,10 +336,17 @@ define([
             'left': 0
           });
 
+
+          $bottomBar.show();
+          $pluginArea.addClass('bottomBarVisible');
+
           if (fullscreen) {
             fullscreen.hide();
           }
-          $topFullScrnBtn.hide();
+          if ($topFullScrnBtn) {
+            $topFullScrnBtn.hide();
+
+          }
 
           $topBar.removeClass('inlineMode');
           $topBar.addClass('navbar-default');
@@ -386,6 +404,12 @@ define([
 
           $(this).hide();
 
+
+          if (__content.appData.options.data.hideBottomToolbar === true) {
+            $bottomBar.hide();
+            $pluginArea.removeClass('bottomBarVisible');
+          }
+
           if (__content.appData.options.data.alwaysShowQuestion === true) {
             $topBar.addClass('inlineMode');
             $topBar.removeClass('navbar-default');
@@ -397,7 +421,9 @@ define([
           if (fullscreen) {
             fullscreen.show();
           }
-          $topFullScrnBtn.show();
+          if ($topFullScrnBtn) {
+            $topFullScrnBtn.show();
+          }
 
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
@@ -449,14 +475,18 @@ define([
         }
         let GoOutFullscreen = function () {
           try {
-            if (document.exitFullscreen) {
-              document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-              document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-              document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-              document.msExitFullscreen();
+            if (document.fullscreenElement ||
+              document.webkitFullscreenElement ||
+              document.mozFullScreenElement) {
+              if (document.exitFullscreen) {
+                document.exitFullscreen ? document.exitFullscreen() : "";
+              } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen ? document.mozCancelFullScreen() : "";
+              } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen ? document.webkitExitFullscreen() : "";
+              } else if (document.msExitFullscreen) {
+                document.msExitFullscreen ? document.msExitFullscreen() : "";
+              }
             }
           } catch (e) {
             console.log(e);
@@ -486,7 +516,7 @@ define([
 
         // initial UI setup
 
-        
+
 
 
 
@@ -509,12 +539,12 @@ define([
       }
       function userResponseHandler(range, data) {
 
-        console.log("Range is "+range +"and value is " + data);
+        console.log("Range is " + range + "and value is " + data);
         saveCurrentState();
 
       }
 
-     
+
 
       function getInteractionId(interactionField) {
         var interactions = __content.optionsJSON;
