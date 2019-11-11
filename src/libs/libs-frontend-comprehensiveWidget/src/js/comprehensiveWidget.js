@@ -244,15 +244,15 @@
             item: publishedId
           }
         }, container, {
-            events: callbacks,
-            uiStyle: uiStyle,
-            playerButtons: { visible: showPlayerButtons }
-          },
+          events: callbacks,
+          uiStyle: uiStyle,
+          playerButtons: { visible: showPlayerButtons }
+        },
           {
             mode: "production"
           }
-          
-          );
+
+        );
       }
     };
     let updateInputs = function (params) {
@@ -346,7 +346,7 @@
             $('#container2').css("height", height + "px");
           }
 
-         
+
         } else {
 
           if (widget.hasHTML) {
@@ -452,49 +452,59 @@
       }
     };
     window.parent.onscroll = function () {
-      try {
-        let iframeID = $('.pluginArea').data('widgetData').iframeID;
-        let iframeTop = $(window.parent.document).find('#' + 'iframe_' + iframeID).offset().top; //209
-        let navBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
-        let scrollingContainer = $('.pluginArea').data('widgetData').scrollingContainer;
+      if ($('.pluginArea').data('widgetData')) {
+        try {
+          let iframeID = $('.pluginArea').data('widgetData').iframeID;
+          let iframeTop = $(window.parent.document).find('#' + 'iframe_' + iframeID).offset().top; //209
+          let navBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
+          let scrollingContainer = $('.pluginArea').data('widgetData').scrollingContainer;
 
-        let scrollingContainerHeight = $(scrollingContainer).outerHeight(true);
-        let iframeHeight = $(window.parent.document).find('#' + 'iframe_' + iframeID).outerHeight(true);
-        let bottomBarHeight = $('.bottomBar-cosmatengine').outerHeight(true);
+          let scrollingContainerHeight = $(scrollingContainer).outerHeight(true);
+          let iframeHeight = $(window.parent.document).find('#' + 'iframe_' + iframeID).outerHeight(true);
+          let bottomBarHeight = $('.bottomBar-cosmatengine').outerHeight(true);
 
-        // 17 px for scroll bar and 10 px padding bottom
-        let distFromTop = iframeTop + iframeHeight - scrollingContainerHeight - bottomBarHeight - 17;
-        if (window.parent.pageYOffset >= distFromTop) {
-          //top set when end of page reached
-          $(scrollingContainer).animate({
-            top: distFromTop + "px"
-          }, 0, 'linear');
-        } else {
-          // top that is set when sticky , 10px extra space from top
-          $(scrollingContainer).animate({
-            top: window.parent.pageYOffset - iframeTop + navBarHt + 10 + "px"
-          }, 0, 'linear');
+          // 17 px for scroll bar and 10 px padding bottom
+          let distFromTop = iframeTop + iframeHeight - scrollingContainerHeight - bottomBarHeight - 17;
+          if (window.parent.pageYOffset >= distFromTop) {
+            //top set when end of page reached
+            $(scrollingContainer).animate({
+              top: distFromTop + "px"
+            }, 0, 'linear');
+          } else {
+            // top that is set when sticky , 10px extra space from top
+            $(scrollingContainer).animate({
+              top: window.parent.pageYOffset - iframeTop + navBarHt + 10 + "px"
+            }, 0, 'linear');
+          }
+
+        } catch (error) {
+          console.log(error);
         }
-
-      } catch (error) {
-        console.log(error);
       }
     };
 
     window.parent.onresize = function () {
-      widgetDimensionChangeHandler();
-      let isFullScreen = $('.pluginArea').data('widgetData').isFullScreen;
-      //if full screen resize both containers
-      //if not full screen rezise only scrolling container
-      if (isFullScreen) {
-        resizeGridContainers(isFullScreen);
-      } else {
+      if ($('.pluginArea').data('widgetData')) {
+        widgetDimensionChangeHandler();
+        let isFullScreen = $('.pluginArea').data('widgetData').isFullScreen;
+        //if full screen resize both containers
+        //if not full screen rezise only scrolling container
+        if (isFullScreen) {
+          resizeGridContainers(isFullScreen);
+        } else {
 
-        let scrollingContainer = $('.pluginArea').data('widgetData').scrollingContainer;
-        resizeGridContainers(isFullScreen, scrollingContainer);
+          let scrollingContainer = $('.pluginArea').data('widgetData').scrollingContainer;
+          resizeGridContainers(isFullScreen, scrollingContainer);
+        }
       }
     };
 
+
+    let destroy = function (params) {
+      //reset all global listeners
+      window.parent.onresize = function () { };
+      window.parent.onscroll = function () { };
+    }
     addListeners();
     createContainer();
 
@@ -506,6 +516,7 @@
       markAnswers: markAnswers,
       leoLeftItem: widget.leoLeftItem,
       leoRightItem: widget.leoRightItem,
+      destroy: destroy
     };
 
 

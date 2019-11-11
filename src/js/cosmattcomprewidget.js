@@ -844,6 +844,9 @@ define([
           __pluginInstance.leoLeftItem.destroy();
         }
         __pluginInstance.leoRightItem.destroy();
+        __pluginInstance.destroy();
+        //reset global listners
+        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () { });
       }
 
       function saveCurrentState() {
