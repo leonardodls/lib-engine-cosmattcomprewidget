@@ -913,7 +913,7 @@ define('cosmattcomprewidget',[
         // var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
         // $leftContainer.append(checkMyWork);
 
-        var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
+        var resetButton = $('<button  title="Clears all the entries that you have added to the sheet" class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
         $leftContainer.append(resetButton);
 
         var fullscreen = $('<button title="Expand the Exercise to Full Screen" class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
