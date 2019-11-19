@@ -198,9 +198,11 @@
   font-size: 18px;
   font-weight: 800;
   color: #008fce;
+  margin-top: 10px ;
 }
 
 .questionInstruction {
+  margin-top: 10px ;
 }
 
 .trans-title {

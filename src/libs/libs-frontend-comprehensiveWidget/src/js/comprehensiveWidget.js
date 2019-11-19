@@ -93,14 +93,14 @@
           $container1.append(data.leftSideData.htmlData);
           $('.html-viewer', $container1).css('font-family', 'Calibri');
           $('.html-viewer', $container1).css('font-size', '12pt');
-          widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
+          widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0], true);
 
           //if is 
           resizeGridContainers(widget.isFullScreen, $container1);
         } else {
 
           widget.leoLeftItem = setDataAndCreateGrids(data.leftSideData, $container1[0]);
-          widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0]);
+          widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0], true);
           setUpContainers($container1);
         }
       }
@@ -125,25 +125,36 @@
       }
     };
 
-    let setDataAndCreateGrids = function (gridData, container, forceScroll) {
+    let setDataAndCreateGrids = function (gridData, container, isRight) {
       let height;
 
       //let the height be scroll for both , manually set the height so as to prevent rendering of the grid on changing from full screen and min screen and vice versa
-      height = "100%";
+      height = "scroll";
 
       let uiStyle = {
         height: height,
         // horizontalAlignment: 'center',
         widgetStyles: { 'box-shadow': 'none', 'border': 'none', 'margin': '0px' }
       };
+      if (isRight) {
 
+        uiStyle = {
+          height: height,
+          // horizontalAlignment: 'center',
+          widgetStyles: {
+            'box-shadow': '5px 5px 10px 0px #9b9a9a',
+            'border': '10px solid #fef1e6',
+            'margin': '0px',
+          }
+        }
+      }
       //wait for grid to load
-      waitForEl(container, ".leonardoPlayerContainer", function (args) {
-        args.css("overflow", "hidden");  // to hide its scrollbar
-        waitForEl(args, ".l-act-player.presentation ", function (args1) {
-          // args.css("margin-top", "-14px");  //to solve top mismatch issue
-        });
-      });
+      // waitForEl(container, ".leonardoPlayerContainer", function (args) {
+      //   args.css("overflow", "hidden");  // to hide its scrollbar
+      //   waitForEl(args, ".l-act-player.presentation ", function (args1) {
+      //     // args.css("margin-top", "-14px");  //to solve top mismatch issue
+      //   });
+      // });
       if (gridData.height == "scroll") {
         //default sticky for small resolution
         $(container).css("position", "sticky");
@@ -292,14 +303,25 @@
     };
     let resizeGridContainers = function (isFullScreen, scrollContainer) {
       try {
+        let $lActPlayer = $('#container1').find('.l-act-player');
+      
         let ht = $('.k-spreadsheet-view-size', $('#container1', $container)).outerWidth(true);
+        ht+= parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
+        + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
+        parseInt($('#container1').css("padding-left")) + parseInt($('#container1').css("padding-right"));
+
         if (ht != undefined) {
-          $('#container1', $container).css('max-width', ht + 30 + "px");
+          $('#container1', $container).css('max-width', ht + 25 + "px");
         }
+
+        $lActPlayer = $('#container2').find('.l-act-player');
         let ht1 = $('.k-spreadsheet-view-size', $('#container2', $container)).outerWidth(true);
+        ht1+= parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
+        + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
+        parseInt($('#container2').css("padding-left")) + parseInt($('#container2').css("padding-right"));
         if (ht1 != undefined) {
           //since it has padding present extra 20 px required
-          $('#container2', $container).css('max-width', ht1 + 40 + "px");
+          $('#container2', $container).css('max-width', ht1 + 25 + "px");
         }
         if (isFullScreen) {
           //set height of container1 and container2 based on the height of bottom bar and top nav bar
@@ -314,7 +336,9 @@
             gridHeight = widget.leoLeftItem.getRequiredDimension().height;
           }
           // 8px buffer
-          let setheight = gridHeight + parseInt($('#container1').find('.l-act-player').css('margin-bottom')) + 8 +
+          let $lActPlayer = $('#container1').find('.l-act-player');
+          let setheight = gridHeight + parseInt($lActPlayer.css('margin-bottom')) + parseInt($lActPlayer.css('margin-top'))
+            + 8 + parseInt($lActPlayer.css('border-top-width')) + parseInt($lActPlayer.css('border-bottom-width')) +
             parseInt($('#container1').css("padding-top")) + parseInt($('#container1').css("padding-bottom"));
 
           if (gridHeight !== -1 && setheight < height) {
@@ -326,7 +350,9 @@
               //adding extra 11 px to align bottom
               $('#container1').css("height", height + 11 + "px");
             } else {
-              $('#container1').css("height", height + "px");
+              //11 px buffer due to margin and border
+              let reqHt = $('#container1').children()[0].scrollHeight + 11 ;
+              (reqHt<height)?$('#container1').css("height", reqHt + "px"):$('#container1').css("height", height + "px");
             }
           }
 
@@ -336,13 +362,16 @@
             gridHeight = widget.leoRightItem.getRequiredDimension().height;
           }
           // 8px buffer
-          setheight = gridHeight + parseInt($('#container2').find('.l-act-player').css('margin-bottom')) + 8 +
+          $lActPlayer = $('#container2').find('.l-act-player');
+          setheight = gridHeight + parseInt($lActPlayer.css('margin-bottom')) + parseInt($lActPlayer.css('margin-top'))
+            + 8 + parseInt($lActPlayer.css('border-top-width')) + parseInt($lActPlayer.css('border-bottom-width')) +
             parseInt($('#container2').css("padding-top")) + parseInt($('#container2').css("padding-bottom"));
 
           if (gridHeight !== -1 && setheight < height) {
             // grid is smaller than viewport height, dont set absolute height
             $('#container2').css("height", setheight + "px");
           } else {
+            //adding 10px 
             $('#container2').css("height", height + "px");
           }
 
@@ -447,7 +476,9 @@
       ////////////////////reset the height of the expand grid as well
       if (widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
         let height = widget.expandLeoItem.getRequiredDimension().height;
-        height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar
+
+        height += 35 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom")) + parseInt($(widget.expandContainer).css("margin-bottom")) + parseInt($(widget.expandContainer).css("margin-bottom"));
+
         $(widget.expandContainer).css("height", height + "px");
       }
     };

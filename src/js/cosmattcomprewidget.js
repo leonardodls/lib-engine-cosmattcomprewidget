@@ -589,8 +589,12 @@ define([
             var s = __pluginInstance.leoRightItem.score();
             __pluginInstance.leoRightItem.displayFeedback(s);
             __updateAnsStatus(s);
+
             /* Saving Answer. */
-            __saveResults(false);
+            // User state is saved in case the plugin throws a “change” event. 
+            // However, the plugin does not throw change event for all user interactions (e.g. selection update, column width update).
+            // Storing user state on checkMyWork to make sure the latest plugin state is saved.
+            saveCurrentState();
           }
         } catch (e) {
           console.log(e);
@@ -836,6 +840,7 @@ define([
 
       function __clearGrades() {
         __pluginInstance.leoRightItem.clearFeedback();
+        saveCurrentState();
       }
 
       function __destroy() {
@@ -851,7 +856,7 @@ define([
 
       function saveCurrentState() {
 
-        var currState = { configData: { value: JSON.stringify(__pluginInstance.leoRightItem.getData()), unit: "" } };
+        var currState = { configData: { value: JSON.stringify(__pluginInstance.leoRightItem.getState()), unit: "" } };
         for (var property in currState) {
           if (currState.hasOwnProperty(property) && currState[property].value !== undefined) {
             var interactionMinScore = __content.score.min;
