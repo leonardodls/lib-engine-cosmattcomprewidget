@@ -34,8 +34,8 @@ define([
   'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
   'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
   'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
-  // 'https://leonardo-sdk-stg.herokuapp.com/leonardo-items.js',
-  'http://192.168.1.143:4080/leonardo-items.js',
+  'https://leonardo-sdk-stg.herokuapp.com/leonardo-items.js',
+  // 'http://192.168.1.143:4080/leonardo-items.js',
   '../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js'
 ], //Required by Rivets
   function (cosmattcomprewidgetTemplateRef) {
@@ -147,7 +147,6 @@ define([
       /********************************************************/
       function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {
 
-        debugger;
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
         //Store the adaptor  
         activityAdaptor = adaptor;
@@ -237,7 +236,6 @@ define([
 
 
         // __processedJsonContent['item-code']
-        debugger
 
         var savedResponses = window.top.assessment_compre.component.savedResponses.filter(function (response) {
           return response.id === __processedJsonContent['item-code'];
@@ -248,7 +246,7 @@ define([
         if (__content.appData.options.data) {
           var data = __content.appData.options.data;
           checkMode = data.checkMode;
-          if (checkMode = 'CMW') {
+          if (checkMode == 'CMW') {
             $questionContainer.find('.submitButton').html(checkMyWorkText);
           }
         }
@@ -256,7 +254,7 @@ define([
         if (savedResponses == undefined) {
           // do nothing
         } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
-          if (checkMode = 'CMW') {
+          if (checkMode == 'CMW') {
             $questionContainer.find('.submitButton').html(checkMyWorkText);
           } else {
             $questionContainer.find('.submitButton').html(submitText);
@@ -264,7 +262,7 @@ define([
           submitButton.prop("disabled", false);
           resetButton.prop("disabled", false);
         } else {
-          if (checkMode = 'CMW') {
+          if (checkMode == 'CMW') {
             $questionContainer.find('.submitButton').html(tryAgainText);
           } else {
             $questionContainer.find('.submitButton').html(submitText);
@@ -301,11 +299,10 @@ define([
 
 
         $questionContainer.find(".submitButton").bind("click", (function () {
-          debugger;
           // window.top.assessment_compre.component.submitTestBtnClicked();
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
           // saveCurrentState();
-          if (checkMode = 'CMW') {
+          if (checkMode == 'CMW') {
             if (submitButton.html() === checkMyWorkText) {
               submitButton.prop("disabled", false);
               resetButton.prop("disabled", true);
@@ -582,7 +579,7 @@ define([
         activityAdaptor.autoResizeActivityIframe();
       }
       function userResponseHandler(eventData) {
-        console.log("Change event ocuured for Uid : " + eventData.uid + " Range is " + eventData.range + "and value is " + eventData.data)
+        // console.log("Change event ocuured for Uid : " + eventData.uid + " Range is " + eventData.range + "and value is " + eventData.data)
         saveCurrentState();
 
       }
