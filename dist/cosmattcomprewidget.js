@@ -406,6 +406,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
             } else if (Object.keys(widget.expandLeoItem).length !== 0 &&
               Object.keys(widget.scrollingLeoItem).length !== 0) {
               resizeGridContainers(false, widget.scrollingContainer);
+              console.log("GRIDS CREATED ... PLUGIN READY");
               $container.trigger("pluginReady");
             }
 
@@ -476,11 +477,11 @@ define('css!../css/cosmattcomprewidget',[],function(){});
     let resizeGridContainers = function (isFullScreen, scrollContainer) {
       try {
         let $lActPlayer = $('#container1').find('.l-act-player');
-      
+
         let ht = $('.k-spreadsheet-view-size', $('#container1', $container)).outerWidth(true);
-        ht+= parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
-        + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
-        parseInt($('#container1').css("padding-left")) + parseInt($('#container1').css("padding-right"));
+        ht += parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
+          + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
+          parseInt($('#container1').css("padding-left")) + parseInt($('#container1').css("padding-right"));
 
         if (ht != undefined) {
           $('#container1', $container).css('max-width', ht + 25 + "px");
@@ -488,9 +489,9 @@ define('css!../css/cosmattcomprewidget',[],function(){});
 
         $lActPlayer = $('#container2').find('.l-act-player');
         let ht1 = $('.k-spreadsheet-view-size', $('#container2', $container)).outerWidth(true);
-        ht1+= parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
-        + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
-        parseInt($('#container2').css("padding-left")) + parseInt($('#container2').css("padding-right"));
+        ht1 += parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
+          + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
+          parseInt($('#container2').css("padding-left")) + parseInt($('#container2').css("padding-right"));
         if (ht1 != undefined) {
           //since it has padding present extra 20 px required
           $('#container2', $container).css('max-width', ht1 + 25 + "px");
@@ -523,8 +524,8 @@ define('css!../css/cosmattcomprewidget',[],function(){});
               $('#container1').css("height", height + 11 + "px");
             } else {
               //11 px buffer due to margin and border
-              let reqHt = $('#container1').children()[0].scrollHeight + 11 ;
-              (reqHt<height)?$('#container1').css("height", reqHt + "px"):$('#container1').css("height", height + "px");
+              let reqHt = $('#container1').children()[0].scrollHeight + 11;
+              (reqHt < height) ? $('#container1').css("height", reqHt + "px") : $('#container1').css("height", height + "px");
             }
           }
 
@@ -587,10 +588,6 @@ define('css!../css/cosmattcomprewidget',[],function(){});
               $container1.css("max-width", "350px");
               $container2.css("min-width", "350px");
             }
-
-
-
-
 
             return;
           }
@@ -971,7 +968,6 @@ define('cosmattcomprewidget',[
         })[0];
 
 
-
         if (__content.appData.options.data) {
           var data = __content.appData.options.data;
           checkMode = data.checkMode;
@@ -979,7 +975,7 @@ define('cosmattcomprewidget',[
             $questionContainer.find('.submitButton').html(checkMyWorkText);
           }
         }
-        // let savedResponses = window.top.assessment_compre.component.savedResponses[0];
+
         if (savedResponses == undefined) {
           // do nothing
         } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
@@ -1001,42 +997,25 @@ define('cosmattcomprewidget',[
         }
 
 
-        // $questionContainer.find(".checkMyWork").bind("click", (function () {
-        //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
-        //   if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-        //     $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-        //   } else {
-        //     $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-        //   }
-        // }));
-
         $questionContainer.find(".resetButton").bind("click", (function () {
           try {
-            // if (submitButton.prop("disabled") == true) {
-            //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
-            //   submitButton.prop("disabled", false);
-            // }
-
             __resetAnswers();
-
-            // window.top.assessment_compre.component.reset();
           } catch (e) {
             console.log(e);
           }
-
         }));
 
 
         $questionContainer.find(".submitButton").bind("click", (function () {
           // window.top.assessment_compre.component.submitTestBtnClicked();
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          // saveCurrentState();
           if (checkMode == 'CMW') {
             if (submitButton.html() === checkMyWorkText) {
               submitButton.prop("disabled", false);
               resetButton.prop("disabled", true);
               $questionContainer.find('.submitButton').html(tryAgainText);
             } else {
+
               submitButton.prop("disabled", false);
               resetButton.prop("disabled", false);
               $questionContainer.find('.submitButton').html(checkMyWorkText);
@@ -1046,13 +1025,6 @@ define('cosmattcomprewidget',[
             resetButton.prop("disabled", true);
           }
 
-          // if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-          //   $(this).html('Submit');
-          //   // resetButton.prop("disabled", false);
-          // } else {
-          //   $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          //   // resetButton.prop("disabled", true);
-          // }
 
         }));
 
@@ -1066,8 +1038,6 @@ define('cosmattcomprewidget',[
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
-
-        // __content.appData.options.data.alwaysShowQuestion = true;
         if (__content.appData.options.data.alwaysShowQuestion === true) {
           $topBar.addClass('inlineMode');
           $topBar.removeClass('navbar-default');
@@ -1136,11 +1106,6 @@ define('cosmattcomprewidget',[
 
         }));
 
-        // $topCloseBtn.bind("click", (function () {
-        //   $(minScreen).trigger("click");
-        // }));
-
-
 
         $questionContainer.find(".minScreen, .topCloseBtn").bind("click", (function () {
           __isFullScreen = false;
@@ -1202,10 +1167,6 @@ define('cosmattcomprewidget',[
 
 
         }));
-
-
-
-
 
         //pluginArea Resize event binding
         $pluginArea.on("widgetResized", function (event, args) {
@@ -1284,10 +1245,7 @@ define('cosmattcomprewidget',[
 
         });
 
-        // initial UI setup
-
-
-
+        //add initial UI setup
 
 
         $(elRoot).html($questionContainer);
@@ -1364,7 +1322,7 @@ define('cosmattcomprewidget',[
             __updateAnsStatus(s);
 
             /* Saving Answer. */
-            // User state is saved in case the plugin throws a “change” event. 
+            // User state is saved in case the plugin throws a 'change' event. 
             // However, the plugin does not throw change event for all user interactions (e.g. selection update, column width update).
             // Storing user state on checkMyWork to make sure the latest plugin state is saved.
             saveCurrentState();
@@ -1421,13 +1379,6 @@ define('cosmattcomprewidget',[
             __content.userAnswersJSON[interactionId].score = interactionMinScore;
             __content.userAnswersJSON[interactionId].status = 'incorrect';
 
-            /*if (Math.round(parseFloat(value.answer) * 100) / 100 == parseFloat(__content.answersJSON[interactionId].correct)) {
-              __content.userAnswersJSON[interactionId].score = interactionMaxScore;
-              __content.userAnswersJSON[interactionId].status = 'correct';
-            } else {
-              __content.userAnswersJSON[interactionId].score = interactionMinScore;
-              __content.userAnswersJSON[interactionId].status = 'incorrect';
-            }*/
             updatePluginVals[__content.optionsJSON[value.id].type] = {
               value: value.answer
             };

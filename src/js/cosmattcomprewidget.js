@@ -242,7 +242,6 @@ define([
         })[0];
 
 
-
         if (__content.appData.options.data) {
           var data = __content.appData.options.data;
           checkMode = data.checkMode;
@@ -250,7 +249,7 @@ define([
             $questionContainer.find('.submitButton').html(checkMyWorkText);
           }
         }
-        // let savedResponses = window.top.assessment_compre.component.savedResponses[0];
+
         if (savedResponses == undefined) {
           // do nothing
         } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
@@ -272,42 +271,25 @@ define([
         }
 
 
-        // $questionContainer.find(".checkMyWork").bind("click", (function () {
-        //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
-        //   if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-        //     $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-        //   } else {
-        //     $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-        //   }
-        // }));
-
         $questionContainer.find(".resetButton").bind("click", (function () {
           try {
-            // if (submitButton.prop("disabled") == true) {
-            //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
-            //   submitButton.prop("disabled", false);
-            // }
-
             __resetAnswers();
-
-            // window.top.assessment_compre.component.reset();
           } catch (e) {
             console.log(e);
           }
-
         }));
 
 
         $questionContainer.find(".submitButton").bind("click", (function () {
           // window.top.assessment_compre.component.submitTestBtnClicked();
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          // saveCurrentState();
           if (checkMode == 'CMW') {
             if (submitButton.html() === checkMyWorkText) {
               submitButton.prop("disabled", false);
               resetButton.prop("disabled", true);
               $questionContainer.find('.submitButton').html(tryAgainText);
             } else {
+
               submitButton.prop("disabled", false);
               resetButton.prop("disabled", false);
               $questionContainer.find('.submitButton').html(checkMyWorkText);
@@ -317,13 +299,6 @@ define([
             resetButton.prop("disabled", true);
           }
 
-          // if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-          //   $(this).html('Submit');
-          //   // resetButton.prop("disabled", false);
-          // } else {
-          //   $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          //   // resetButton.prop("disabled", true);
-          // }
 
         }));
 
@@ -337,8 +312,6 @@ define([
 
         var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
 
-
-        // __content.appData.options.data.alwaysShowQuestion = true;
         if (__content.appData.options.data.alwaysShowQuestion === true) {
           $topBar.addClass('inlineMode');
           $topBar.removeClass('navbar-default');
@@ -407,11 +380,6 @@ define([
 
         }));
 
-        // $topCloseBtn.bind("click", (function () {
-        //   $(minScreen).trigger("click");
-        // }));
-
-
 
         $questionContainer.find(".minScreen, .topCloseBtn").bind("click", (function () {
           __isFullScreen = false;
@@ -473,10 +441,6 @@ define([
 
 
         }));
-
-
-
-
 
         //pluginArea Resize event binding
         $pluginArea.on("widgetResized", function (event, args) {
@@ -555,10 +519,7 @@ define([
 
         });
 
-        // initial UI setup
-
-
-
+        //add initial UI setup
 
 
         $(elRoot).html($questionContainer);
@@ -635,7 +596,7 @@ define([
             __updateAnsStatus(s);
 
             /* Saving Answer. */
-            // User state is saved in case the plugin throws a “change” event. 
+            // User state is saved in case the plugin throws a 'change' event. 
             // However, the plugin does not throw change event for all user interactions (e.g. selection update, column width update).
             // Storing user state on checkMyWork to make sure the latest plugin state is saved.
             saveCurrentState();
@@ -692,13 +653,6 @@ define([
             __content.userAnswersJSON[interactionId].score = interactionMinScore;
             __content.userAnswersJSON[interactionId].status = 'incorrect';
 
-            /*if (Math.round(parseFloat(value.answer) * 100) / 100 == parseFloat(__content.answersJSON[interactionId].correct)) {
-              __content.userAnswersJSON[interactionId].score = interactionMaxScore;
-              __content.userAnswersJSON[interactionId].status = 'correct';
-            } else {
-              __content.userAnswersJSON[interactionId].score = interactionMinScore;
-              __content.userAnswersJSON[interactionId].status = 'incorrect';
-            }*/
             updatePluginVals[__content.optionsJSON[value.id].type] = {
               value: value.answer
             };

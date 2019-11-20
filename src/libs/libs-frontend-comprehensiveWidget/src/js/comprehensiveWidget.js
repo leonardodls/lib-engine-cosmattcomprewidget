@@ -236,6 +236,7 @@
             } else if (Object.keys(widget.expandLeoItem).length !== 0 &&
               Object.keys(widget.scrollingLeoItem).length !== 0) {
               resizeGridContainers(false, widget.scrollingContainer);
+              console.log("GRIDS CREATED ... PLUGIN READY");
               $container.trigger("pluginReady");
             }
 
@@ -306,11 +307,11 @@
     let resizeGridContainers = function (isFullScreen, scrollContainer) {
       try {
         let $lActPlayer = $('#container1').find('.l-act-player');
-      
+
         let ht = $('.k-spreadsheet-view-size', $('#container1', $container)).outerWidth(true);
-        ht+= parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
-        + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
-        parseInt($('#container1').css("padding-left")) + parseInt($('#container1').css("padding-right"));
+        ht += parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
+          + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
+          parseInt($('#container1').css("padding-left")) + parseInt($('#container1').css("padding-right"));
 
         if (ht != undefined) {
           $('#container1', $container).css('max-width', ht + 25 + "px");
@@ -318,9 +319,9 @@
 
         $lActPlayer = $('#container2').find('.l-act-player');
         let ht1 = $('.k-spreadsheet-view-size', $('#container2', $container)).outerWidth(true);
-        ht1+= parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
-        + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
-        parseInt($('#container2').css("padding-left")) + parseInt($('#container2').css("padding-right"));
+        ht1 += parseInt($lActPlayer.css('margin-left')) + parseInt($lActPlayer.css('margin-right'))
+          + parseInt($lActPlayer.css('border-left-width')) + parseInt($lActPlayer.css('border-right-width')) +
+          parseInt($('#container2').css("padding-left")) + parseInt($('#container2').css("padding-right"));
         if (ht1 != undefined) {
           //since it has padding present extra 20 px required
           $('#container2', $container).css('max-width', ht1 + 25 + "px");
@@ -353,8 +354,8 @@
               $('#container1').css("height", height + 11 + "px");
             } else {
               //11 px buffer due to margin and border
-              let reqHt = $('#container1').children()[0].scrollHeight + 11 ;
-              (reqHt<height)?$('#container1').css("height", reqHt + "px"):$('#container1').css("height", height + "px");
+              let reqHt = $('#container1').children()[0].scrollHeight + 11;
+              (reqHt < height) ? $('#container1').css("height", reqHt + "px") : $('#container1').css("height", height + "px");
             }
           }
 
@@ -417,10 +418,6 @@
               $container1.css("max-width", "350px");
               $container2.css("min-width", "350px");
             }
-
-
-
-
 
             return;
           }
