@@ -34,7 +34,8 @@ define([
   'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
   'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
   'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
-  'https://leonardo-sdk-stg.herokuapp.com/leonardo-items.js',
+  // 'https://leonardo-sdk-stg.herokuapp.com/leonardo-items.js',
+  'http://192.168.1.143:4080/leonardo-items.js',
   '../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js'
 ], //Required by Rivets
   function (cosmattcomprewidgetTemplateRef) {
@@ -126,6 +127,10 @@ define([
 
       var __pluginInstance;
       var __isFullScreen = false;
+      var checkMode = 'Submit';
+      var checkMyWorkText = "Check My Work";
+      var tryAgainText = "Try Again";
+      var submitText = "Submit";
 
       /********************************************************/
       /*                  ENGINE-SHELL INIT FUNCTION
@@ -142,6 +147,7 @@ define([
       /********************************************************/
       function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {
 
+        debugger;
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
         //Store the adaptor  
         activityAdaptor = adaptor;
@@ -228,17 +234,42 @@ define([
 
 
 
-        $questionContainer.find('.submitButton').html('Submit');
-        let savedResponses = window.top.assessment_compre.component.savedResponses[0];
+
+
+        // __processedJsonContent['item-code']
+        debugger
+
+        var savedResponses = window.top.assessment_compre.component.savedResponses.filter(function (response) {
+          return response.id === __processedJsonContent['item-code'];
+        })[0];
+
+
+
+        if (__content.appData.options.data) {
+          var data = __content.appData.options.data;
+          checkMode = data.checkMode;
+          if (checkMode = 'CMW') {
+            $questionContainer.find('.submitButton').html(checkMyWorkText);
+          }
+        }
+        // let savedResponses = window.top.assessment_compre.component.savedResponses[0];
         if (savedResponses == undefined) {
           // do nothing
         } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
-          $questionContainer.find('.submitButton').html('Submit');
-          // resetButton.prop("disabled", false);
+          if (checkMode = 'CMW') {
+            $questionContainer.find('.submitButton').html(checkMyWorkText);
+          } else {
+            $questionContainer.find('.submitButton').html(submitText);
+          }
+          submitButton.prop("disabled", false);
+          resetButton.prop("disabled", false);
         } else {
-          // $questionContainer.find('.submitButton').html('Try Again');
-          // resetButton.prop("disabled", true);
-          $questionContainer.find('.submitButton').html('Submit');
+          if (checkMode = 'CMW') {
+            $questionContainer.find('.submitButton').html(tryAgainText);
+          } else {
+            $questionContainer.find('.submitButton').html(submitText);
+          }
+          resetButton.prop("disabled", true);
           submitButton.prop("disabled", true);
         }
 
@@ -254,10 +285,10 @@ define([
 
         $questionContainer.find(".resetButton").bind("click", (function () {
           try {
-            if (submitButton.prop("disabled") == true) {
-              window.top.assessment_compre.component.checkMyWorkBtnClicked();
-              submitButton.prop("disabled", false);
-            }
+            // if (submitButton.prop("disabled") == true) {
+            //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
+            //   submitButton.prop("disabled", false);
+            // }
 
             __resetAnswers();
 
@@ -272,10 +303,23 @@ define([
         $questionContainer.find(".submitButton").bind("click", (function () {
           debugger;
           // window.top.assessment_compre.component.submitTestBtnClicked();
-
           window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          saveCurrentState();
-          submitButton.prop("disabled", true);
+          // saveCurrentState();
+          if (checkMode = 'CMW') {
+            if (submitButton.html() === checkMyWorkText) {
+              submitButton.prop("disabled", false);
+              resetButton.prop("disabled", true);
+              $questionContainer.find('.submitButton').html(tryAgainText);
+            } else {
+              submitButton.prop("disabled", false);
+              resetButton.prop("disabled", false);
+              $questionContainer.find('.submitButton').html(checkMyWorkText);
+            }
+          } else {
+            submitButton.prop("disabled", true);
+            resetButton.prop("disabled", true);
+          }
+
           // if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
           //   $(this).html('Submit');
           //   // resetButton.prop("disabled", false);
@@ -537,9 +581,8 @@ define([
       function autoResizeEngine() {
         activityAdaptor.autoResizeActivityIframe();
       }
-      function userResponseHandler(range, data) {
-
-        console.log("Range is " + range + "and value is " + data);
+      function userResponseHandler(eventData) {
+        console.log("Change event ocuured for Uid : " + eventData.uid + " Range is " + eventData.range + "and value is " + eventData.data)
         saveCurrentState();
 
       }
@@ -569,13 +612,17 @@ define([
        * Bound to click of Activity submit button.
        */
       function handleSubmit(event) {
-        /* Saving Answer. */
-        __saveResults(true);
 
+        /* Check Answer */
+        var s = __pluginInstance.leoRightItem.score();
         /* Marking Answers. */
         if (activityAdaptor.showAnswers) {
-          __markAnswers();
+          __pluginInstance.leoRightItem.displayFeedback(s);
         }
+
+        __updateAnsStatus(s);
+        /* Saving Answer. */
+        __saveResults(true);
 
         //$('input[id^=option]').attr("disabled", true);
       }
@@ -621,30 +668,9 @@ define([
       }
       function __checkAnswer(scoreObj) {
         var status = __constants.ACTIVITY_INCORRECT;
-        var incorrectFound = false; // at least one incorrect found
-        var correctFound = false; // // at least one correct found
-        var sheets = scoreObj.sheets;
-        for (var sheetIndex in sheets) {
-          var rows = sheets[sheetIndex].rows;
-          for (var rowIndex in rows) {
-            var cells = rows[rowIndex].cells;
-            for (var cellIndex in cells) {
-              var grade = cells[cellIndex].grade;
-              if (grade == "INCORRECT") {
-                incorrectFound = true;
-              } else if (grade == "CORRECT") {
-                correctFound = true;
-              }
-            }
-          }
-        }
 
-        if (correctFound) {
+        if (scoreObj.scoredJson && scoreObj.scoredJson.status == "pass") {
           status = __constants.ACTIVITY_CORRECT;
-        }
-
-        if (incorrectFound) { // mark incorrect even if single cell was filled incorrectly
-          status = __constants.ACTIVITY_INCORRECT;
         }
 
         return status;
@@ -864,13 +890,14 @@ define([
             var interactionMaxScore = __content.score.max / optionsCount;
 
             var interactionId = getInteractionId(property);
+            var status = __content.userAnswersJSON[interactionId] && __content.userAnswersJSON[interactionId].status ? __content.userAnswersJSON[interactionId].status : "incorrect";
             if (interactionId != "") {
               __content.userAnswersJSON[interactionId] = {};
               __content.userAnswersJSON[interactionId].answer = currState[property].value.toString();
               if (currState[property].unit != undefined) __content.userAnswersJSON[interactionId].unit = currState[property].unit.toString();
               __content.userAnswersJSON[interactionId].maxscore = interactionMaxScore;
               __content.userAnswersJSON[interactionId].score = interactionMinScore;
-              __content.userAnswersJSON[interactionId].status = "incorrect";
+              __content.userAnswersJSON[interactionId].status = status;
 
             }
           }

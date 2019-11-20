@@ -178,9 +178,11 @@
         }, 100);
       }
     };
-    let widgetDimensionChangeHandler = function (args) {
+    let widgetDimensionChangeHandler = function (eventData) {
+      // console.log("Dimesnion changed for Uid : "+ eventData.uid);
+      console.log("resize called");
       if (Object.keys(widget.leoRightItem).length === 0 && widget.leoRightItem.constructor === Object) {
-        $container.trigger("widgetResized", [args]);
+        $container.trigger("widgetResized", [eventData]);
       } else {
         let dim = widget.leoRightItem.getRequiredDimension();
         $container.trigger("widgetResized", { height: dim.height });
