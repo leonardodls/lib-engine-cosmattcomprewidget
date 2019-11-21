@@ -86,8 +86,11 @@
           $container1.css("position", "sticky");
           $container1.css("margin-bottom", "0px");
           $container1.css("border", "1px solid #cae8ff");
-          $container1.css("width", "55%");
-
+          if (data.ratio) {
+            $container1.css("width", data.ratio[0] + "%");
+          } else {
+            $container1.css("width", "55%");
+          }
 
           $container2.css("min-width", "350px");
 
@@ -551,7 +554,7 @@
             containerHt = $(scrollContainer).children()[0].scrollHeight;
             containerHt += setAdditonalHeightRequired($(scrollContainer));
             //10px subracting as HTML appears to be to touching the bottom (grid has margin sso that does not require that )
-            let htmlHeight = height-10;
+            let htmlHeight = height - 10;
             (containerHt < htmlHeight) ? $(scrollContainer).css("height", containerHt + "px") : $(scrollContainer).css('height', htmlHeight + "px");
           } else {
             $(scrollContainer).css('height', height + "px");
