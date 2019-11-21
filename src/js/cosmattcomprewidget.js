@@ -515,7 +515,7 @@ define([
             if (callback) {
               callback();
             }
-          }, 200);
+          }, 300);
 
         });
 

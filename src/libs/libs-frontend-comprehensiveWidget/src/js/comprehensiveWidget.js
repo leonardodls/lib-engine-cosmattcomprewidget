@@ -13,17 +13,12 @@
       expandLeoItem: undefined,
       leoLeftItem: undefined,
       leoRightItem: undefined,
+      leftContainer: undefined,
+      rightContainer: undefined,
       hasHTML: false,
       isFullScreen: false
 
     };
-
-
-    // //temp hack to know if full screen, reset call bug issue
-    // if( $('.topBar-cosmatengine').is(":visible")){
-    //   widget.isFullScreen = true;
-    // }
-
 
     let type, $container1, $container2, viewJSON, data;
     // let leoRightItem;
@@ -74,12 +69,24 @@
         //add div to the main container
         $container.append($div);
 
+        widget.leftContainer = $container1[0];
+        widget.rightContainer = $container2[0];
+
+
+        if (widget.options.view.sidebyside.leftSideData.height == "scroll") {
+          widget.scrollingContainer = widget.leftContainer;
+          widget.expandContainer = widget.rightContainer;
+        } else {
+          widget.scrollingContainer = widget.rightContainer;
+          widget.expandContainer = widget.leftContainer;
+        }
+
         if (data.leftSideData.type == "html") {
           widget.hasHTML = true;
           $container1.css("position", "sticky");
           $container1.css("margin-bottom", "0px");
           $container1.css("border", "1px solid #cae8ff");
-          $container1.css("max-width", "350px");
+          $container1.css("width", "55%");
 
 
           $container2.css("min-width", "350px");
@@ -180,7 +187,6 @@
     };
     let widgetDimensionChangeHandler = function (eventData) {
       // console.log("Dimesnion changed for Uid : "+ eventData.uid);
-      console.log("resize called");
       if (Object.keys(widget.leoRightItem).length === 0 && widget.leoRightItem.constructor === Object) {
         $container.trigger("widgetResized", [eventData]);
       } else {
@@ -304,7 +310,107 @@
         }
       });
     };
+
+    let setAdditonalHeightRequired = function ($container) {
+
+      let mt = parseInt($container.css('margin-top'));
+      let mb = parseInt($container.css('margin-bottom'));
+      let pt = parseInt($container.css('padding-top'));
+      let pb = parseInt($container.css('padding-bottom'));
+      return mt + mb + pt + pb;
+    }
+
     let resizeGridContainers = function (isFullScreen, scrollContainer) {
+
+      try {
+        let leftWd, leftHt, rightWd, rightHt;
+
+        if (widget.leoLeftItem && Object.keys(widget.leoLeftItem).length !== 0) {
+          leftWd = widget.leoLeftItem.getRequiredDimension().width;
+          leftHt = widget.leoLeftItem.getRequiredDimension().height;
+        }
+
+        if (widget.leoRightItem && Object.keys(widget.leoRightItem).length !== 0) {
+          rightWd = widget.leoRightItem.getRequiredDimension().width;
+          rightHt = widget.leoRightItem.getRequiredDimension().height;
+        }
+
+
+
+        if (widget.isFullScreen) {
+          ////WIDTH SETTINGS
+
+
+          //HEIGHT SETTINGS
+          //set height of container1 and container2 based on the height of bottom bar and top nav bar
+          let bottomBarHt = $('.bottomBar-cosmatengine').outerHeight(true);
+          let topBarHt = $('.topBar-cosmatengine').outerHeight(true);
+          let sum = bottomBarHt + topBarHt + 10;   //10px buffer
+          let height = window.parent.innerHeight - sum;
+
+          let htmlHt;
+          if (widget.hasHTML) {
+            htmlHt = $(widget.leftContainer).children()[0].scrollHeight;
+            htmlHt += setAdditonalHeightRequired($(widget.leftContainer));
+          }
+
+          (htmlHt < height) ? $(widget.leftContainer).css("height", htmlHt + "px") : $(widget.leftContainer).css('height', height + "px");
+
+          $(widget.rightContainer).css('height', height + "px");
+        } else {
+          //Inline mode calculations
+
+          //if verticaL scrollbar is visible then add 17px to width 
+          //TBD
+          // let vis = checkVerticalScroll($('.k-spreadsheet-scroller', $('#container2', $container)));
+          ////WIDTH SETTINGS
+          if (widget.hasHTML) {
+            $(widget.leftContainer).css('max-width', "");
+          } else {
+            $(widget.leftContainer).css('max-width', leftWd + 17 + "px");
+          }
+          $(widget.rightContainer).css('max-width', rightWd + 17 + "px");
+
+
+
+
+          //HEIGHT SETTINGS
+          if (widget.leftContainer == widget.expandContainer) {
+            // is html ?
+            if (widget.hasHTML) {
+              let htmlHt;
+              htmlHt = $(widget.leftContainer).children()[0].scrollHeight;
+              htmlHt += setAdditonalHeightRequired($(widget.leftContainer));
+              $(widget.leftContainer).css("height", htmlHt + "px");
+            } else {
+              $(widget.leftContainer).css('height', leftHt + 17 + "px");
+            }
+          } else {
+            //right is expand container
+            $(widget.rightContainer).css('height', rightHt + 17 + "px");
+          }
+
+          if (widget.leftContainer == widget.scrollingContainer) {
+            let isLeft = true;
+            setScrollContainerMS(widget.leftContainer, isLeft);
+          } else {
+            //right is scroll container
+            setScrollContainerMS(widget.rightContainer);
+          }
+        }
+
+
+      } catch (error) {
+        console.log(error);
+      }
+
+
+      return;
+      // fetch the size 
+      // check max space available
+      // check scrollbars ver and horizontal and add 17px for each
+      // apply as max width and max height -- as flex is used , otherwise flex will eat all space
+
       try {
         let $lActPlayer = $('#container1').find('.l-act-player');
 
@@ -392,7 +498,8 @@
             // left container
             if (widget.options.view.sidebyside.leftSideData.height == "scroll") {
               setScrollContainerMS(scrollContainer);
-              leftContainer = widget.scrollContainer;
+              leftContainer = widget.scrollingContainer;
+
             } else {
               let ht = $(widget.expandContainer).find('.html-viewer').outerHeight(true);
               $(widget.expandContainer).css("height", ht + "px");
@@ -431,7 +538,33 @@
     };
 
     //MS stands for min screen
-    let setScrollContainerMS = function (scrollContainer) {
+    let setScrollContainerMS = function (scrollContainer, isLeft) {
+      try {
+        let bottomBarHt = $('.app-footer', $(window.parent.document)).outerHeight(true);
+        let topBarHt = $('.navbar', $(window.parent.document)).outerHeight(true);
+        let sum = bottomBarHt + topBarHt + 10;   //10px buffer
+        let height = window.parent.innerHeight - sum;
+
+        let containerHt;
+        if (isLeft) {
+          if (widget.hasHTML) {
+            containerHt = parseInt($(scrollContainer).find('.html-viewer').css("height"));
+            $(scrollContainer).css("height", containerHt + "px");
+          } else {
+            $(scrollContainer).css("height", height + "px");
+          }
+        } else {
+          //isRight 
+          $(scrollContainer).css("height", height + "px");
+        }
+
+      } catch (error) {
+        console.log(error);
+      }
+
+
+      return;
+
       try {
         // set height of scroll container 
         let bottomBarHt = $('.app-footer', $(window.parent.document)).outerHeight(true);
@@ -472,6 +605,7 @@
     };
     //MS stands for min screen
     let setExpandContainerMS = function () {
+      return
       ////////////////////reset the height of the expand grid as well
       if (widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
         let height = widget.expandLeoItem.getRequiredDimension().height;
@@ -494,7 +628,7 @@
           let bottomBarHeight = $('.bottomBar-cosmatengine').outerHeight(true);
 
           // 17 px for scroll bar and 10 px padding bottom
-          let distFromTop = iframeTop + iframeHeight - scrollingContainerHeight - bottomBarHeight - 17;
+          let distFromTop = iframeTop + iframeHeight - scrollingContainerHeight - bottomBarHeight ;
           if (window.parent.pageYOffset >= distFromTop) {
             //top set when end of page reached
             $(scrollingContainer).animate({
@@ -519,13 +653,17 @@
         let isFullScreen = $('.pluginArea').data('widgetData').isFullScreen;
         //if full screen resize both containers
         //if not full screen rezise only scrolling container
-        if (isFullScreen) {
-          resizeGridContainers(isFullScreen);
-        } else {
 
-          let scrollingContainer = $('.pluginArea').data('widgetData').scrollingContainer;
-          resizeGridContainers(isFullScreen, scrollingContainer);
-        }
+
+        resizeGridContainers(isFullScreen);
+
+        // if (isFullScreen) {
+        //   resizeGridContainers(isFullScreen);
+        // } else {
+
+        //   let scrollingContainer = $('.pluginArea').data('widgetData').scrollingContainer;
+        //   resizeGridContainers(isFullScreen, scrollingContainer);
+        // }
       }
     };
 
