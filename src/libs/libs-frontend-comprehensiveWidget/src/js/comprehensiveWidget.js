@@ -548,11 +548,15 @@
         let containerHt;
         if (isLeft) {
           if (widget.hasHTML) {
-            containerHt = parseInt($(scrollContainer).find('.html-viewer').css("height"));
-            $(scrollContainer).css("height", containerHt + "px");
+            containerHt = $(scrollContainer).children()[0].scrollHeight;
+            containerHt += setAdditonalHeightRequired($(scrollContainer));
+            //10px subracting as HTML appears to be to touching the bottom (grid has margin sso that does not require that )
+            let htmlHeight = height-10;
+            (containerHt < htmlHeight) ? $(scrollContainer).css("height", containerHt + "px") : $(scrollContainer).css('height', htmlHeight + "px");
           } else {
-            $(scrollContainer).css("height", height + "px");
+            $(scrollContainer).css('height', height + "px");
           }
+
         } else {
           //isRight 
           $(scrollContainer).css("height", height + "px");
@@ -628,7 +632,7 @@
           let bottomBarHeight = $('.bottomBar-cosmatengine').outerHeight(true);
 
           // 17 px for scroll bar and 10 px padding bottom
-          let distFromTop = iframeTop + iframeHeight - scrollingContainerHeight - bottomBarHeight ;
+          let distFromTop = iframeTop + iframeHeight - scrollingContainerHeight - bottomBarHeight;
           if (window.parent.pageYOffset >= distFromTop) {
             //top set when end of page reached
             $(scrollingContainer).animate({
