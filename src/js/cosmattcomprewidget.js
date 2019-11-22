@@ -131,6 +131,7 @@ define([
       var checkMyWorkText = "Check My Work";
       var tryAgainText = "Try Again";
       var submitText = "Submit";
+      var debugMode = true;
 
       /********************************************************/
       /*                  ENGINE-SHELL INIT FUNCTION
@@ -438,12 +439,17 @@ define([
           $('body', window.parent.document).css("overflow", "");
           $pluginArea.trigger("minScreenEvent", ["bim", "baz"]);
           GoOutFullscreen();
+          //triggering widgetResized as widgetDimensionChange is not called in Firefox
+          $pluginArea.trigger("widgetResized", ['']);
 
 
         }));
 
         //pluginArea Resize event binding
         $pluginArea.on("widgetResized", function (event, args) {
+          if (debugMode) {
+            debugger;
+          }
           try {
             if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
               __config.RESIZE_MODE = "auto";
