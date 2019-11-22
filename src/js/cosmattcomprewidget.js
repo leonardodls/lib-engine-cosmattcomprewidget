@@ -126,6 +126,11 @@ define([
 
       var __pluginInstance;
       var __isFullScreen = false;
+      var checkMode = 'Submit';
+      var checkMyWorkText = "Check My Work";
+      var tryAgainText = "Try Again";
+      var submitText = "Submit";
+      var debugMode = false;
 
       /********************************************************/
       /*                  ENGINE-SHELL INIT FUNCTION
@@ -142,6 +147,8 @@ define([
       /********************************************************/
       function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {
 
+        
+
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
         //Store the adaptor  
         activityAdaptor = adaptor;
@@ -156,8 +163,15 @@ define([
         var $questionContainer = $('<div class="cosmattcomprewidget-engine"></div>');
         var $topBar = $('<nav class="topBar-cosmatengine navbar navbar-default navbar-fixed-top"><div class="question-container"></div></nav>');
 
-        var $topFullScrnBtn = $('<button title="Expand the Exercise to Full Screen" class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
-        $questionContainer.append($topFullScrnBtn);
+
+        // __content.appData.options.data.hideTopToolbar = true;
+        if (__content.appData.options.data.hideTopToolbar != true) {
+          let $topToolbar = $('<div class="topToolbar-cosmatcomprewidget"></div>');
+          $questionContainer.append($topToolbar);
+          var $topFullScrnBtn = $('<button title="Expand the Exercise to Full Screen" class="btn-link fw-normal link-btn max-min-toolbar topfullscreen"><i class="fa fa-expand mr-2"></i> Full Screen</button>');
+          $topToolbar.append($topFullScrnBtn);
+        }
+
 
         var $questionArea = $('<div class="question-text"></div>');
         $topBar.find('.question-container').append($questionArea);
@@ -168,8 +182,8 @@ define([
         var $questionInstruction = $('<div class="questionInstruction"></div>');
         $questionArea.append($questionInstruction);
 
-        var $backBtn = $('<div class="backbtn" title="Exit Full Screen"><i class="fa fa-times"></i></div>');
-        $topBar.find('.question-container').append($backBtn);
+        var $topCloseBtn = $('<div class="topCloseBtn" title="Exit Full Screen"><i class="fa fa-times"></i></div>');
+        $topBar.find('.question-container').append($topCloseBtn);
 
         var $pluginArea = $('<div class="pluginArea"></div>');
 
@@ -184,8 +198,9 @@ define([
         $questionContainer.append($topBar);
         $questionContainer.append($pluginArea);
 
-
         // $questionContainer.append($separeator);
+        $pluginArea.addClass('bottomBarVisible');
+
         let $bottomBar = $('<div class="bottomBar-cosmatengine"></div>');
         $questionContainer.append($bottomBar);
         let $separeator = $('<div class="separator"></div>');
@@ -193,21 +208,19 @@ define([
 
         let $toolbarContainer = $('<div class="toolbar-container"></div>');
         $bottomBar.append($toolbarContainer);
-
         //$toolbarContainer.append($('<div class="fill-space"></div>'));
 
         var $rightContainer = $('<div class="rightContainer" ></div>');
         var $leftContainer = $('<div class="leftContainer" ></div>');
         $toolbarContainer.append($leftContainer);
         $toolbarContainer.append($rightContainer);
-
         var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
         $rightContainer.append(submitButton);
 
         // var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
         // $leftContainer.append(checkMyWork);
 
-        var resetButton = $('<button class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
+        var resetButton = $('<button  title="Clears all the entries that you have added to the sheet" class="btn btn-link fw-normal link-btn resetButton"><i class="fa fa-repeat mr-2"></i>Reset</button>');
         $leftContainer.append(resetButton);
 
         var fullscreen = $('<button title="Expand the Exercise to Full Screen" class="btn btn-link fw-normal link-btn fullscreen max-min-toolbar" ><i class="fa fa-expand mr-2"></i> Full Screen</button>');
@@ -216,26 +229,109 @@ define([
         var minScreen = $('<button title="Exit Full Screen" class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
         $leftContainer.append(minScreen);
 
-        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
+        // var savedResponses = window.top.assessment_compre.component.savedResponses.filter(function (response) {
+        //   return response.id === __processedJsonContent['item-code'];
+        // })[0];
 
-        $questionContainer.find('.submitButton').html('Submit');
-        let savedResponses = window.top.assessment_compre.component.savedResponses[0];
-        if(savedResponses==undefined){
-          // do nothing
-        }else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
-          $questionContainer.find('.submitButton').html('Submit');
-          // resetButton.prop("disabled", false);
-        } else {
-          // $questionContainer.find('.submitButton').html('Try Again');
-          // resetButton.prop("disabled", true);
-          $questionContainer.find('.submitButton').html('Submit');
-          submitButton.prop("disabled", true);
+
+        let setSubmitButton = function (savedResponses) {
+          if (savedResponses == undefined) {
+            // do nothing
+          } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
+            if (checkMode == 'CMW') {
+              $questionContainer.find('.submitButton').html(checkMyWorkText);
+            } else {
+              $questionContainer.find('.submitButton').html(submitText);
+            }
+            submitButton.prop("disabled", false);
+            resetButton.prop("disabled", false);
+          } else {
+            if (checkMode == 'CMW') {
+              $questionContainer.find('.submitButton').html(tryAgainText);
+            } else {
+              $questionContainer.find('.submitButton').html(submitText);
+            }
+            resetButton.prop("disabled", true);
+            submitButton.prop("disabled", true);
+          }
+        };
+
+
+
+
+
+        if (__content.appData.options.data) {
+          var data = __content.appData.options.data;
+          checkMode = data.checkMode;
+          if (checkMode == 'CMW') {
+            $questionContainer.find('.submitButton').html(checkMyWorkText);
+          }
         }
 
+        var savedResponses = getQuesResponse();
+        setSubmitButton(savedResponses);
+
+
+        $questionContainer.find(".resetButton").bind("click", (function () {
+          try {
+            __resetAnswers();
+          } catch (e) {
+            console.log(e);
+          }
+        }));
+
+
+        $questionContainer.find(".submitButton").bind("click", (function () {
+          // window.top.assessment_compre.component.submitTestBtnClicked();
+          window.top.assessment_compre.component.checkMyWorkBtnClicked();
+          if (checkMode == 'CMW') {
+            if (submitButton.html() === checkMyWorkText) {
+              submitButton.prop("disabled", false);
+              resetButton.prop("disabled", true);
+              $questionContainer.find('.submitButton').html(tryAgainText);
+            } else {
+
+              submitButton.prop("disabled", false);
+              resetButton.prop("disabled", false);
+              $questionContainer.find('.submitButton').html(checkMyWorkText);
+            }
+          } else {
+            submitButton.prop("disabled", true);
+            resetButton.prop("disabled", true);
+          }
+
+
+        }));
+
+
+        if (__content.appData.options.data.hideBottomToolbar === true) {
+          $bottomBar.hide();
+          $pluginArea.removeClass('bottomBarVisible');
+        }
+
+
+
+        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
+
+        if (__content.appData.options.data.alwaysShowQuestion === true) {
+          $topBar.addClass('inlineMode');
+          $topBar.removeClass('navbar-default');
+          $topCloseBtn.hide();
+          $topBar.show();
+
+        } else {
+
+          $topBar.hide();   // initial UI setup
+        }
+
+
         $questionContainer.find(".fullscreen, .topfullscreen").bind("click", (function () {
+          savedResponses = getQuesResponse();
+          setSubmitButton(savedResponses);
+
           __isFullScreen = true;
           //show back button
-          $backBtn.show();
+          $topCloseBtn.show();
           $pluginArea.trigger("fullScreenEvent", ["bim", "baz"]);
 
           //hide the footer and top navbar dom elements
@@ -258,8 +354,20 @@ define([
             'left': 0
           });
 
-          fullscreen.hide();
-          $topFullScrnBtn.hide();
+
+          $bottomBar.show();
+          $pluginArea.addClass('bottomBarVisible');
+
+          if (fullscreen) {
+            fullscreen.hide();
+          }
+          if ($topFullScrnBtn) {
+            $topFullScrnBtn.hide();
+
+          }
+
+          $topBar.removeClass('inlineMode');
+          $topBar.addClass('navbar-default');
           $topBar.show();  //display top bar
           $questionContainer.find(".minScreen").show();
 
@@ -276,12 +384,8 @@ define([
 
         }));
 
-        $backBtn.bind("click", (function () {
-          $(minScreen).trigger("click");
-        }));
 
-
-        $questionContainer.find(".minScreen").bind("click", (function () {
+        $questionContainer.find(".minScreen, .topCloseBtn").bind("click", (function () {
           __isFullScreen = false;
 
           // //remove extra history item that was pushed and reset the onpopstate funtion 
@@ -289,7 +393,7 @@ define([
           // window.onpopstate = function () {
           // };
 
-          $backBtn.hide();
+          $topCloseBtn.hide();
           // unhide the footer and top navbar dom elements
           $('*', parent.document).filter(function () {
             if ($(this).css("position") === 'fixed') {
@@ -312,60 +416,42 @@ define([
           });
 
           $(this).hide();
-          
-          $topBar.hide();  //hide top bar
-          fullscreen.show();
-          $topFullScrnBtn.show();
+
+
+          if (__content.appData.options.data.hideBottomToolbar === true) {
+            $bottomBar.hide();
+            $pluginArea.removeClass('bottomBarVisible');
+          }
+
+          if (__content.appData.options.data.alwaysShowQuestion === true) {
+            $topBar.addClass('inlineMode');
+            $topBar.removeClass('navbar-default');
+            $topCloseBtn.hide();
+            $topBar.show();
+          } else {
+            $topBar.hide();  //hide top bar
+          }
+          if (fullscreen) {
+            fullscreen.show();
+          }
+          if ($topFullScrnBtn) {
+            $topFullScrnBtn.show();
+          }
 
           // reset  the body scroll bar on goint to min screen
           $('body', window.parent.document).css("overflow", "");
           $pluginArea.trigger("minScreenEvent", ["bim", "baz"]);
           GoOutFullscreen();
+          //triggering widgetResized as widgetDimensionChange is not called in Firefox
+          $pluginArea.trigger("widgetResized", ['']);
 
-        }));
-
-        // $questionContainer.find(".checkMyWork").bind("click", (function () {
-        //   window.top.assessment_compre.component.checkMyWorkBtnClicked();
-        //   if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-        //     $(this).html('<i class="fa fa-check mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-        //   } else {
-        //     $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-        //   }
-        // }));
-
-        $questionContainer.find(".resetButton").bind("click", (function () {
-          try {
-            if(submitButton.prop("disabled") == true){
-              window.top.assessment_compre.component.checkMyWorkBtnClicked();
-            submitButton.prop("disabled", false);
-            }
-
-            __resetAnswers();
-            
-            // window.top.assessment_compre.component.reset();
-          } catch (e) {
-            console.log(e);
-          }
-
-        }));
-
-        $questionContainer.find(".submitButton").bind("click", (function () {
-          // window.top.assessment_compre.component.submitTestBtnClicked();
-          
-          window.top.assessment_compre.component.checkMyWorkBtnClicked();
-          submitButton.prop("disabled", true);
-          // if (window.top.assessment_compre.component.checkMyWorkText === 'Check My Work') {
-          //   $(this).html('Submit');
-          //   // resetButton.prop("disabled", false);
-          // } else {
-          //   $(this).html('<i class="fa fa-refresh mr-2"></i>' + window.top.assessment_compre.component.checkMyWorkText);
-          //   // resetButton.prop("disabled", true);
-          // }
 
         }));
 
         //pluginArea Resize event binding
         $pluginArea.on("widgetResized", function (event, args) {
+          if (debugMode) {
+          }
           try {
             if (__isFullScreen == false && typeof activityAdaptor.autoResizeActivityIframe !== 'undefined') {
               __config.RESIZE_MODE = "auto";
@@ -402,20 +488,26 @@ define([
         }
         let GoOutFullscreen = function () {
           try {
-            if (document.exitFullscreen) {
-              document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-              document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) {
-              document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) {
-              document.msExitFullscreen();
+            if (document.fullscreenElement ||
+              document.webkitFullscreenElement ||
+              document.mozFullScreenElement) {
+              if (document.exitFullscreen) {
+                document.exitFullscreen ? document.exitFullscreen() : "";
+              } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen ? document.mozCancelFullScreen() : "";
+              } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen ? document.webkitExitFullscreen() : "";
+              } else if (document.msExitFullscreen) {
+                document.msExitFullscreen ? document.msExitFullscreen() : "";
+              }
             }
           } catch (e) {
             console.log(e);
           }
 
         }
+
+       
 
         let fullScrToggle = false;
         $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
@@ -433,13 +525,11 @@ define([
             if (callback) {
               callback();
             }
-          }, 200);
+          }, 300);
 
         });
 
-        // initial UI setup
-        $topBar.hide();
-
+        //add initial UI setup
 
 
         $(elRoot).html($questionContainer);
@@ -459,35 +549,13 @@ define([
       function autoResizeEngine() {
         activityAdaptor.autoResizeActivityIframe();
       }
-      function userResponseHandler(callbackValue) {
-        for (var property in callbackValue) {
-          if (callbackValue.hasOwnProperty(property) && callbackValue[property].value !== undefined) {
-            var interactionMinScore = __content.score.min;
-            var optionsCount = Object.keys(__content.optionsJSON).length;
-            var interactionMaxScore = __content.score.max / optionsCount;
+      function userResponseHandler(eventData) {
+        // console.log("Change event ocuured for Uid : " + eventData.uid + " Range is " + eventData.range + "and value is " + eventData.data)
+        saveCurrentState();
 
-            var interactionId = getInteractionId(property);
-            if (interactionId != '') {
-              __content.userAnswersJSON[interactionId] = {};
-              __content.userAnswersJSON[interactionId].answer = callbackValue[property].value.toString();
-              if (callbackValue[property].unit != undefined) __content.userAnswersJSON[interactionId].unit = callbackValue[property].unit.toString();
-              __content.userAnswersJSON[interactionId].correctanswer = __content.answersJSON[interactionId].correct.toString();
-              __content.userAnswersJSON[interactionId].maxscore = interactionMaxScore;
-
-
-              if (Math.round(parseFloat(callbackValue[property].value) * 1000) / 1000 == parseFloat(__content.answersJSON[interactionId].correct)) {
-                __content.userAnswersJSON[interactionId].score = interactionMaxScore;
-                __content.userAnswersJSON[interactionId].status = 'correct';
-              } else {
-                __content.userAnswersJSON[interactionId].score = interactionMinScore;
-                __content.userAnswersJSON[interactionId].status = 'incorrect';
-              }
-            }
-          }
-        }
-        // $(document).triggerHandler('userAnswered', callbackValue);
-        __saveResults(false);
       }
+
+
 
       function getInteractionId(interactionField) {
         var interactions = __content.optionsJSON;
@@ -512,13 +580,17 @@ define([
        * Bound to click of Activity submit button.
        */
       function handleSubmit(event) {
-        /* Saving Answer. */
-        __saveResults(true);
 
+        /* Check Answer */
+        var s = __pluginInstance.leoRightItem.score();
         /* Marking Answers. */
         if (activityAdaptor.showAnswers) {
-          __markAnswers();
+          __pluginInstance.leoRightItem.displayFeedback(s);
         }
+
+        __updateAnsStatus(s);
+        /* Saving Answer. */
+        __saveResults(true);
 
         //$('input[id^=option]').attr("disabled", true);
       }
@@ -532,8 +604,12 @@ define([
             var s = __pluginInstance.leoRightItem.score();
             __pluginInstance.leoRightItem.displayFeedback(s);
             __updateAnsStatus(s);
+
             /* Saving Answer. */
-            __saveResults(false);
+            // User state is saved in case the plugin throws a 'change' event. 
+            // However, the plugin does not throw change event for all user interactions (e.g. selection update, column width update).
+            // Storing user state on checkMyWork to make sure the latest plugin state is saved.
+            saveCurrentState();
           }
         } catch (e) {
           console.log(e);
@@ -560,30 +636,9 @@ define([
       }
       function __checkAnswer(scoreObj) {
         var status = __constants.ACTIVITY_INCORRECT;
-        var incorrectFound = false; // at least one incorrect found
-        var correctFound = false; // // at least one correct found
-        var sheets = scoreObj.sheets;
-        for (var sheetIndex in sheets) {
-          var rows = sheets[sheetIndex].rows;
-          for (var rowIndex in rows) {
-            var cells = rows[rowIndex].cells;
-            for (var cellIndex in cells) {
-              var grade = cells[cellIndex].grade;
-              if (grade == "INCORRECT") {
-                incorrectFound = true;
-              } else if (grade == "CORRECT") {
-                correctFound = true;
-              }
-            }
-          }
-        }
 
-        if (correctFound) {
+        if (scoreObj.scoredJson && scoreObj.scoredJson.status == "pass") {
           status = __constants.ACTIVITY_CORRECT;
-        }
-
-        if (incorrectFound) { // mark incorrect even if single cell was filled incorrectly
-          status = __constants.ACTIVITY_INCORRECT;
         }
 
         return status;
@@ -592,32 +647,32 @@ define([
        * Function to display last result saved in LMS.
        */
       function updateLastSavedResults(lastResults) {
-        var updatePluginVals = {};
-        $.each(lastResults.interactions, function (num, value) {
-          var interactionMinScore = __content.score.min;
-          var optionsCount = Object.keys(__content.optionsJSON).length;
-          var interactionMaxScore = __content.score.max / optionsCount;
+        if (lastResults.interactions && lastResults.interactions.length > 0) {
+          var updatePluginVals = {};
+          $.each(lastResults.interactions, function (num, value) {
+            var interactionMinScore = __content.score.min;
+            var optionsCount = Object.keys(__content.optionsJSON).length;
+            var interactionMaxScore = __content.score.max / optionsCount;
 
-          var interactionId = value.id;
+            var interactionId = value.id;
 
-          __content.userAnswersJSON[interactionId] = {};
-          __content.userAnswersJSON[interactionId].answer = value.answer.toString();
-          __content.userAnswersJSON[interactionId].correctanswer = __content.answersJSON[interactionId].correct.toString();
-          __content.userAnswersJSON[interactionId].maxscore = interactionMaxScore;
-
-          if (Math.round(parseFloat(value.answer) * 100) / 100 == parseFloat(__content.answersJSON[interactionId].correct)) {
-            __content.userAnswersJSON[interactionId].score = interactionMaxScore;
-            __content.userAnswersJSON[interactionId].status = 'correct';
-          } else {
+            __content.userAnswersJSON[interactionId] = {};
+            __content.userAnswersJSON[interactionId].answer = value.answer.toString();
+            __content.userAnswersJSON[interactionId].correctanswer = __content.answersJSON[interactionId].correct.toString();
+            __content.userAnswersJSON[interactionId].maxscore = interactionMaxScore;
             __content.userAnswersJSON[interactionId].score = interactionMinScore;
             __content.userAnswersJSON[interactionId].status = 'incorrect';
-          }
-          updatePluginVals[__content.optionsJSON[value.id].type] = {
-            value: value.answer
-          };
-          if (value.unit) updatePluginVals[__content.optionsJSON[value.id].type].unit = value.unit;
-        });
-        __pluginInstance.updateInputs(updatePluginVals);
+
+            updatePluginVals[__content.optionsJSON[value.id].type] = {
+              value: value.answer
+            };
+            if (value.unit) updatePluginVals[__content.optionsJSON[value.id].type].unit = value.unit;
+          });
+          var savedState = JSON.parse(updatePluginVals.configData.value);
+
+          savedState.leonardoId != undefined ? __pluginInstance.leoRightItem.setState(savedState) : __pluginInstance.leoRightItem.setData(savedState);
+
+        }
 
       }
       /* ---------------------- PUBLIC FUNCTIONS END ----------------------------*/
@@ -746,7 +801,7 @@ define([
           markAnswerObj[options[element].type].correctAnswer = answers[element].correct;
 
         });
-        __pluginInstance.markAnswers(markAnswerObj);
+        __pluginInstance.leoRightItem.markAnswers(markAnswerObj);
 
 
       }
@@ -772,15 +827,31 @@ define([
 
       function __clearGrades() {
         __pluginInstance.leoRightItem.clearFeedback();
+        saveCurrentState();
       }
 
       function __destroy() {
         __pluginInstance.leoRightItem.destroy();
+        if (__pluginInstance.leoLeftItem) {
+          __pluginInstance.leoLeftItem.destroy();
+        }
+        __pluginInstance.leoRightItem.destroy();
+        __pluginInstance.destroy();
+        //reset global listners
+        $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () { });
       }
+
+      function getQuesResponse() {
+        return window.top.assessment_compre.component.savedResponses.filter(function (response) {
+          return response.id === __processedJsonContent['item-code'];
+        })[0];
+      }
+
+
 
       function saveCurrentState() {
 
-        var currState = { configData: { value: JSON.stringify(__pluginInstance.leoRightItem.getData()), unit: "" } };
+        var currState = { configData: { value: JSON.stringify(__pluginInstance.leoRightItem.getState()), unit: "" } };
         for (var property in currState) {
           if (currState.hasOwnProperty(property) && currState[property].value !== undefined) {
             var interactionMinScore = __content.score.min;
@@ -788,13 +859,14 @@ define([
             var interactionMaxScore = __content.score.max / optionsCount;
 
             var interactionId = getInteractionId(property);
+            var status = __content.userAnswersJSON[interactionId] && __content.userAnswersJSON[interactionId].status ? __content.userAnswersJSON[interactionId].status : "incorrect";
             if (interactionId != "") {
               __content.userAnswersJSON[interactionId] = {};
               __content.userAnswersJSON[interactionId].answer = currState[property].value.toString();
               if (currState[property].unit != undefined) __content.userAnswersJSON[interactionId].unit = currState[property].unit.toString();
               __content.userAnswersJSON[interactionId].maxscore = interactionMaxScore;
               __content.userAnswersJSON[interactionId].score = interactionMinScore;
-              __content.userAnswersJSON[interactionId].status = "incorrect";
+              __content.userAnswersJSON[interactionId].status = status;
 
             }
           }
