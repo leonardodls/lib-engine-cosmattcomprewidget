@@ -131,7 +131,7 @@ define([
       var checkMyWorkText = "Check My Work";
       var tryAgainText = "Try Again";
       var submitText = "Submit";
-      var debugMode = true;
+      var debugMode = false;
 
       /********************************************************/
       /*                  ENGINE-SHELL INIT FUNCTION

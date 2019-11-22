@@ -17,7 +17,7 @@
       rightContainer: undefined,
       hasHTML: false,
       isFullScreen: false,
-      debugMode: true
+      debugMode: false
     };
 
     let type, $container1, $container2, viewJSON, data;

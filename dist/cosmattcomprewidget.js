@@ -187,7 +187,7 @@ define('css!../css/cosmattcomprewidget',[],function(){});
       rightContainer: undefined,
       hasHTML: false,
       isFullScreen: false,
-      debugMode: true
+      debugMode: false
     };
 
     let type, $container1, $container2, viewJSON, data;
@@ -803,7 +803,7 @@ define('cosmattcomprewidget',[
       var checkMyWorkText = "Check My Work";
       var tryAgainText = "Try Again";
       var submitText = "Submit";
-      var debugMode = true;
+      var debugMode = false;
 
       /********************************************************/
       /*                  ENGINE-SHELL INIT FUNCTION
