@@ -101,8 +101,7 @@
             widget.expandContainer = $container1[0];
           }
           $container1.append(data.leftSideData.htmlData);
-          $('.html-viewer', $container1).css('font-family', 'Calibri');
-          $('.html-viewer', $container1).css('font-size', '12pt');
+          
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0], true);
 
           //if is 
