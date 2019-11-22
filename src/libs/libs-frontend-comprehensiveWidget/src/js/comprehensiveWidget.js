@@ -304,18 +304,8 @@
         //scrolling container position gets changed as by default window is scrolled , so scrolling back to top
         $(window.parent).scrollTop(0);
         $(widget.scrollingContainer).css("top", "0px");
-
-        if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0) {
-          //abs
-        } else {
-          // reexpand the expanding container
-          if (widget.expandContainer != undefined && widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
-            let height = widget.expandLeoItem.getRequiredDimension().height;
-            height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
-            $(widget.expandContainer).css("height", height + "px");
-
-          }
-        }
+        resizeGridContainers();
+        
       });
     };
 

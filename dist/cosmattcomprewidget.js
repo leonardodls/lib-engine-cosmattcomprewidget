@@ -474,18 +474,8 @@ define('css!../css/cosmattcomprewidget',[],function(){});
         //scrolling container position gets changed as by default window is scrolled , so scrolling back to top
         $(window.parent).scrollTop(0);
         $(widget.scrollingContainer).css("top", "0px");
-
-        if (widget.leoRightItem && Object.keys(widget.leoRightItem).length === 0) {
-          //abs
-        } else {
-          // reexpand the expanding container
-          if (widget.expandContainer != undefined && widget.expandLeoItem && Object.keys(widget.expandLeoItem).length !== 0) {
-            let height = widget.expandLeoItem.getRequiredDimension().height;
-            height += 17 + parseInt($(widget.expandContainer).css("padding-top")) + parseInt($(widget.expandContainer).css("padding-bottom"));  // 17 for scroll bar , 20 for container padding
-            $(widget.expandContainer).css("height", height + "px");
-
-          }
-        }
+        resizeGridContainers();
+        
       });
     };
 
@@ -830,6 +820,8 @@ define('cosmattcomprewidget',[
       /********************************************************/
       function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {
 
+        
+
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
         //Store the adaptor  
         activityAdaptor = adaptor;
@@ -914,15 +906,35 @@ define('cosmattcomprewidget',[
         var minScreen = $('<button title="Exit Full Screen" class="btn btn-link fw-normal link-btn minScreen max-min-toolbar" style="display: none;"><i class="fa fa-compress mr-2"></i>Min Screen</button>');
         $leftContainer.append(minScreen);
 
+        // var savedResponses = window.top.assessment_compre.component.savedResponses.filter(function (response) {
+        //   return response.id === __processedJsonContent['item-code'];
+        // })[0];
+
+
+        let setSubmitButton = function (savedResponses) {
+          if (savedResponses == undefined) {
+            // do nothing
+          } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
+            if (checkMode == 'CMW') {
+              $questionContainer.find('.submitButton').html(checkMyWorkText);
+            } else {
+              $questionContainer.find('.submitButton').html(submitText);
+            }
+            submitButton.prop("disabled", false);
+            resetButton.prop("disabled", false);
+          } else {
+            if (checkMode == 'CMW') {
+              $questionContainer.find('.submitButton').html(tryAgainText);
+            } else {
+              $questionContainer.find('.submitButton').html(submitText);
+            }
+            resetButton.prop("disabled", true);
+            submitButton.prop("disabled", true);
+          }
+        };
 
 
 
-
-        // __processedJsonContent['item-code']
-
-        var savedResponses = window.top.assessment_compre.component.savedResponses.filter(function (response) {
-          return response.id === __processedJsonContent['item-code'];
-        })[0];
 
 
         if (__content.appData.options.data) {
@@ -933,25 +945,8 @@ define('cosmattcomprewidget',[
           }
         }
 
-        if (savedResponses == undefined) {
-          // do nothing
-        } else if (savedResponses && savedResponses.data && !savedResponses.data.submitted) {
-          if (checkMode == 'CMW') {
-            $questionContainer.find('.submitButton').html(checkMyWorkText);
-          } else {
-            $questionContainer.find('.submitButton').html(submitText);
-          }
-          submitButton.prop("disabled", false);
-          resetButton.prop("disabled", false);
-        } else {
-          if (checkMode == 'CMW') {
-            $questionContainer.find('.submitButton').html(tryAgainText);
-          } else {
-            $questionContainer.find('.submitButton').html(submitText);
-          }
-          resetButton.prop("disabled", true);
-          submitButton.prop("disabled", true);
-        }
+        var savedResponses = getQuesResponse();
+        setSubmitButton(savedResponses);
 
 
         $questionContainer.find(".resetButton").bind("click", (function () {
@@ -1008,6 +1003,9 @@ define('cosmattcomprewidget',[
 
 
         $questionContainer.find(".fullscreen, .topfullscreen").bind("click", (function () {
+          savedResponses = getQuesResponse();
+          setSubmitButton(savedResponses);
+
           __isFullScreen = true;
           //show back button
           $topCloseBtn.show();
@@ -1186,6 +1184,8 @@ define('cosmattcomprewidget',[
           }
 
         }
+
+       
 
         let fullScrToggle = false;
         $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
@@ -1518,6 +1518,14 @@ define('cosmattcomprewidget',[
         //reset global listners
         $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () { });
       }
+
+      function getQuesResponse() {
+        return window.top.assessment_compre.component.savedResponses.filter(function (response) {
+          return response.id === __processedJsonContent['item-code'];
+        })[0];
+      }
+
+
 
       function saveCurrentState() {
 
