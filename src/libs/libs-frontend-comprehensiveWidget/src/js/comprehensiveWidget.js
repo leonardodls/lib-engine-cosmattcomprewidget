@@ -101,7 +101,7 @@
             widget.expandContainer = $container1[0];
           }
           $container1.append(data.leftSideData.htmlData);
-          
+
           widget.leoRightItem = setDataAndCreateGrids(data.rightSideData, $container2[0], true);
 
           //if is 
@@ -304,7 +304,7 @@
         $(window.parent).scrollTop(0);
         $(widget.scrollingContainer).css("top", "0px");
         resizeGridContainers();
-        
+
       });
     };
 
@@ -477,6 +477,10 @@
 
     let destroy = function (params) {
       //reset all global listeners
+      widget.leoRightItem.destroy();
+      if (widget.leoLeftItem) {
+        widget.leoLeftItem.destroy();
+      }
       window.parent.onresize = function () { };
       window.parent.onscroll = function () { };
     }

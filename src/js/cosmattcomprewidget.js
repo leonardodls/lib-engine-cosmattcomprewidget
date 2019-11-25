@@ -148,7 +148,7 @@ define([
       /********************************************************/
       function init(elRoot, params, adaptor, htmlLayout, jsonContentObj, callback) {
 
-        
+
 
         /* ---------------------- BEGIN OF INIT ---------------------------------*/
         //Store the adaptor  
@@ -288,19 +288,22 @@ define([
 
         $questionContainer.find(".submitButton").bind("click", (function () {
           // window.top.assessment_compre.component.submitTestBtnClicked();
-          window.top.assessment_compre.component.checkMyWorkBtnClicked();
+          // window.top.assessment_compre.component.checkMyWorkBtnClicked();
           if (checkMode == 'CMW') {
             if (submitButton.html() === checkMyWorkText) {
+              showGrades();
               submitButton.prop("disabled", false);
               resetButton.prop("disabled", true);
               $questionContainer.find('.submitButton').html(tryAgainText);
             } else {
-
+              __clearGrades();
               submitButton.prop("disabled", false);
               resetButton.prop("disabled", false);
               $questionContainer.find('.submitButton').html(checkMyWorkText);
             }
           } else {
+            // handleSubmit();
+            window.top.assessment_compre.component.checkMyWorkBtnClicked();
             submitButton.prop("disabled", true);
             resetButton.prop("disabled", true);
           }
@@ -513,7 +516,7 @@ define([
 
         }
 
-       
+
 
         let fullScrToggle = false;
         $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () {
@@ -561,8 +564,6 @@ define([
 
       }
 
-
-
       function getInteractionId(interactionField) {
         var interactions = __content.optionsJSON;
         var interactionId = '';
@@ -573,6 +574,7 @@ define([
         }
         return '';
       }
+
       /**
        * ENGINE-SHELL Interface
        *
@@ -603,8 +605,9 @@ define([
 
       /**
        * Function to show user grades.
+       * @param correctAns: acn be given here also. Although it's already provided in the initial config JSON
        */
-      function showGrades(savedAnswer, reviewAttempt) {
+      function showGrades(correctAns) {
         try {
           if (__pluginInstance.leoRightItem !== undefined && Object.keys(__pluginInstance.leoRightItem).length !== 0) {
             var s = __pluginInstance.leoRightItem.score();
@@ -620,6 +623,39 @@ define([
         } catch (e) {
           console.log(e);
         }
+      }
+
+      /**
+     * Function to show hints
+     * returning -1 to adhere to interface
+     * -1 refers to none more hints left
+     */
+      function showHints() {
+        var response = __pluginInstance.displayHints(true);
+        saveCurrentState();
+        return response;
+      }
+
+      /**
+      * Function to tell if hints are aavailable or not
+      */
+      function hasHints() {
+        return __pluginInstance.hasHints();
+      }
+
+      /**
+      * Function to return count of hints remaining
+      */
+      function remainingHints() {
+        return __pluginInstance.remainingHints();
+      }
+
+      /**
+      * Function to hide hints
+      */
+      function hideHints() {
+        __pluginInstance.displayHints(false);
+        saveCurrentState();
       }
 
       function __updateAnsStatus(s) {
@@ -640,6 +676,7 @@ define([
           }
         }
       }
+
       function __checkAnswer(scoreObj) {
         var status = __constants.ACTIVITY_INCORRECT;
 
@@ -649,6 +686,7 @@ define([
 
         return status;
       }
+
       /**
        * Function to display last result saved in LMS.
        */
@@ -687,6 +725,7 @@ define([
       /* ---------------------- PRIVATE FUNCTIONS -------------------------------*/
 
       /* ---------------------- JSON PROCESSING FUNCTIONS START ---------------------------------*/
+
       /**
        * Parse and Update JSON based on cosmatttsc specific requirements.
        */
@@ -737,7 +776,6 @@ define([
         /* Returning processed JSON. */
         return jsonContent;
       }
-
 
       /**
    * Function called to send result JSON to adaptor (partial save OR submit).
@@ -812,7 +850,6 @@ define([
 
       }
 
-
       function __generateFeedback() {
         for (var prop in __feedback) {
           __feedback[prop] = false;
@@ -837,11 +874,7 @@ define([
       }
 
       function __destroy() {
-        __pluginInstance.leoRightItem.destroy();
-        if (__pluginInstance.leoLeftItem) {
-          __pluginInstance.leoLeftItem.destroy();
-        }
-        __pluginInstance.leoRightItem.destroy();
+        //call widget destroy
         __pluginInstance.destroy();
         //reset global listners
         $(document).on('fullscreenchange webkitfullscreenchange mozfullscreenchange MSFullscreenChange', function () { });
@@ -852,8 +885,6 @@ define([
           return response.id === __processedJsonContent['item-code'];
         })[0];
       }
-
-
 
       function saveCurrentState() {
 
