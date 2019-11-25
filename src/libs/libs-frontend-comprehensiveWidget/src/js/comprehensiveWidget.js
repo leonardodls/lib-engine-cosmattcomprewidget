@@ -418,12 +418,18 @@
             let htmlHeight = height - 10;
             (containerHt < htmlHeight) ? $(scrollContainer).css("height", containerHt + "px") : $(scrollContainer).css('height', htmlHeight + "px");
           } else {
-            $(scrollContainer).css('height', height + "px");
+            // give as much height required
+            let leftHt = widget.leoLeftItem.getRequiredDimension().height;
+            leftHt += 17;
+            (leftHt < height) ? $(scrollContainer).css('height', leftHt + "px") : $(scrollContainer).css('height', height + "px");
           }
 
         } else {
           //isRight 
-          $(scrollContainer).css("height", height + "px");
+          let rightHt = widget.leoRightItem.getRequiredDimension().height;
+          rightHt += 17;
+          (rightHt < height) ? $(scrollContainer).css('height', rightHt + "px") : $(scrollContainer).css('height', height + "px");
+
         }
 
       } catch (error) {

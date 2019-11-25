@@ -588,12 +588,18 @@ define('css!../css/cosmattcomprewidget',[],function(){});
             let htmlHeight = height - 10;
             (containerHt < htmlHeight) ? $(scrollContainer).css("height", containerHt + "px") : $(scrollContainer).css('height', htmlHeight + "px");
           } else {
-            $(scrollContainer).css('height', height + "px");
+            // give as much height required
+            let leftHt = widget.leoLeftItem.getRequiredDimension().height;
+            leftHt += 17;
+            (leftHt < height) ? $(scrollContainer).css('height', leftHt + "px") : $(scrollContainer).css('height', height + "px");
           }
 
         } else {
           //isRight 
-          $(scrollContainer).css("height", height + "px");
+          let rightHt = widget.leoRightItem.getRequiredDimension().height;
+          rightHt += 17;
+          (rightHt < height) ? $(scrollContainer).css('height', rightHt + "px") : $(scrollContainer).css('height', height + "px");
+
         }
 
       } catch (error) {
@@ -994,8 +1000,11 @@ define('cosmattcomprewidget',[
 
 
 
-        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
+        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_' + activityAdaptor.getId());
 
+        // To fix Firefox unnecessary scrollbar issue
+        $(iframeArea).contents().find('body').css('overflow','hidden');
+        
         if (__content.appData.options.data.alwaysShowQuestion === true) {
           $topBar.addClass('inlineMode');
           $topBar.removeClass('navbar-default');

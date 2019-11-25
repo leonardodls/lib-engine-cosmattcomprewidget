@@ -319,8 +319,11 @@ define([
 
 
 
-        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('iframe');
+        var iframeArea = $('body', window.parent.document).find(".iframeContainer").find('#iframe_' + activityAdaptor.getId());
 
+        // To fix Firefox unnecessary scrollbar issue
+        $(iframeArea).contents().find('body').css('overflow','hidden');
+        
         if (__content.appData.options.data.alwaysShowQuestion === true) {
           $topBar.addClass('inlineMode');
           $topBar.removeClass('navbar-default');
