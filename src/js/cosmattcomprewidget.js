@@ -269,6 +269,18 @@ define([
 
         if (__content.appData.options.data) {
           var data = __content.appData.options.data;
+          if(data.noFullScreen){
+            fullscreen.css('display', 'none');
+
+            //hide top full screen button as well
+            if($topFullScrnBtn){
+              $topFullScrnBtn.css('display', 'none');
+            }
+
+            //remove divider from reset button
+            resetButton.addClass('noRightElement');
+          }
+
           if(data.showDoneButton){
             $questionContainer.find('.doneButton').css('display', 'block');
             $questionContainer.find('.submitButton').css('display', 'none');

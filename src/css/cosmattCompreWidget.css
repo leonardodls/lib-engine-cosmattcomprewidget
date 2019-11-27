@@ -128,6 +128,11 @@
 .resetButton:hover {
   border-right: 1px solid #d1d1d1;
 }
+.resetButton.noRightElement,
+.resetButton.noRightElement:hover {
+  border-right: none;
+}
+
 
 .btn-inverse {
   color: #fff;
