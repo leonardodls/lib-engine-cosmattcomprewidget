@@ -221,6 +221,8 @@ define([
         $toolbarContainer.append($rightContainer);
         var submitButton = $('<button class="btn btn-inverse float-right ml-auto submitButton">Submit</button>');
         $rightContainer.append(submitButton);
+        var $doneButton = $('<button style="display:none;" class="btn btn-inverse float-right ml-auto doneButton">Close</button>');
+        $rightContainer.append($doneButton);
 
         // var checkMyWork = $('<button class="btn btn-link fw-normal link-btn  checkMyWork"><i class="fa fa-check mr-2"></i>Check My Work</button>');
         // $leftContainer.append(checkMyWork);
@@ -267,6 +269,12 @@ define([
 
         if (__content.appData.options.data) {
           var data = __content.appData.options.data;
+          if(data.showDoneButton){
+            $questionContainer.find('.doneButton').css('display', 'block');
+            $questionContainer.find('.submitButton').css('display', 'none');
+          }
+
+
           checkMode = data.checkMode;
           if (checkMode == 'CMW') {
             $questionContainer.find('.submitButton').html(checkMyWorkText);
@@ -277,6 +285,10 @@ define([
         setSubmitButton(savedResponses);
 
 
+        $doneButton.bind("click", (function () {
+          $questionContainer.find(".minScreen").click();
+
+        }));
         $questionContainer.find(".resetButton").bind("click", (function () {
           try {
             __resetAnswers();
