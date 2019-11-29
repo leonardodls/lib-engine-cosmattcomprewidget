@@ -503,7 +503,9 @@ define([
         });
 
         $pluginArea.on("gridChanged", function (event, range, data, args) {
-          saveCurrentState();
+            var s = __pluginInstance.leoRightItem.score();
+            __updateAnsStatus(s);
+            saveCurrentState();
         });
 
         let GoInFullscreen = function (element) {
