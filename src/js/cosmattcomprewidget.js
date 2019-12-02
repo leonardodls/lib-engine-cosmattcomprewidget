@@ -34,7 +34,7 @@ define([
   'css!../../node_modules/bootstrap/dist/css/bootstrap.min.css',
   'css!../libs/libs-frontend-comprehensiveWidget/src/css/comprehensiveWidget.css',
   'css!../css/cosmattcomprewidget.css', //Custom styles of the engine (applied over bootstrap & front-end-core)
-  'https://leonardo-sdk-stg.herokuapp.com/leonardo-items.js',
+  'https://sdk.leonardodls.com/leonardo-items.js',
   // 'http://192.168.1.143:4080/leonardo-items.js',
   '../libs/libs-frontend-comprehensiveWidget/src/js/comprehensiveWidget.js'
 ], //Required by Rivets
