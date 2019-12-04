@@ -446,7 +446,8 @@ define('css!../css/cosmattcomprewidget',[],function(){});
         }, container, {
           events: callbacks,
           uiStyle: uiStyle,
-          playerButtons: { visible: showPlayerButtons }
+          playerButtons: { visible: showPlayerButtons },
+          consumerKey: options.consumerKey 
         },
           {
             mode: "production"
@@ -876,6 +877,7 @@ define('cosmattcomprewidget',[
         //add callback function to appData
         __content.appData.options.data.assessmentCallback = userResponseHandler;
         __content.appData.options.data.autoResizer = autoResizeEngine;
+         __content.appData.options.data.consumerKey = params.consumerKey;
         __pluginInstance = $pluginArea.comprehensiveWidget(activityAdaptor.getId(), __content.appData.options.data);
         $questionContainer.append($topBar);
         $questionContainer.append($pluginArea);

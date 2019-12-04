@@ -276,7 +276,8 @@
         }, container, {
           events: callbacks,
           uiStyle: uiStyle,
-          playerButtons: { visible: showPlayerButtons }
+          playerButtons: { visible: showPlayerButtons },
+          consumerKey: options.consumerKey 
         },
           {
             mode: "production"
